@@ -7,20 +7,17 @@ import java.util.TimerTask;
 
 public class Main extends JFrame {
 
-    int SIZE = 1000;
-    int HALF_SIZE = SIZE / 2;
-
-    public Main() {
+    public Main( Plane plane, double speed ) {
         super();
         //setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setSize( SIZE, SIZE );
+        //setSize( plane.SIZE, plane.SIZE );
         setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         setLayout( new BorderLayout() );
 
-        setLocationRelativeTo( null );
+        //setLocationRelativeTo( null );
         setLocation( -1108, 4 );
-        RealPlane p = new RealPlane( SIZE, 100 );
-        add( p );
+        //setLocation( 100, 10 );
+        add( plane );
         pack();
         setVisible( true );
 
@@ -28,17 +25,24 @@ public class Main extends JFrame {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                p.nextFrame();
+                plane.nextFrame( speed );
             }
         };
         timer.scheduleAtFixedRate( task, 0, 10 );
-
-
-        p.addFunzione( new Sin( 1, 1 ) );
     }
 
     public static void main( String[] args ) {
-        new Main();
+
+        int SIZE = 1000;
+        double scale = 100d; // quanti pixel sono una unita'
+        double speed = 0.01d;
+
+        RealPlane p = new RealPlane( SIZE, scale );
+        //p.addFunzione( new Sin( 1, 1 ) );
+
+        p.addFunzione( new OndaQuadra( 1 / 5d ) );
+
+        new Main( p, speed );
     }
 
 }

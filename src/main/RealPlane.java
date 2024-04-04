@@ -27,10 +27,7 @@ public class RealPlane extends Plane<Double> {
     }
 
     @Override
-    public void paint( Graphics gr ) {
-        super.paint( gr );
-        Graphics2D g = (Graphics2D) gr;
-
+    public void paintChild( Graphics2D g ) {
         g.setStroke( new BasicStroke( 2 ) );
         g.setColor( Color.white );
         for( int f = 0; f < funzioni.size(); f++ ) {

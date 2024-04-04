@@ -30,6 +30,16 @@ abstract class Plane<T> extends JPanel {
         super.paint( gr );
 
         Graphics2D g = (Graphics2D) gr;
+
+        g.setRenderingHint( RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY );
+        g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+        g.setRenderingHint( RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY );
+        g.setRenderingHint( RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE );
+        g.setRenderingHint( RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON );
+        g.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
+        g.setRenderingHint( RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY );
+        g.setRenderingHint( RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE );
+
         //g.setBackground( Color.white );
         g.setColor( Color.black );
         g.fillRect( 0, 0, SIZE, SIZE );
@@ -46,15 +56,19 @@ abstract class Plane<T> extends JPanel {
         for( int y = scaleInt; y < SIZE; y += scaleInt ) {
             g.drawLine( HALF_SIZE - 3, y, HALF_SIZE + 3, y );
         }
+
+        paintChild( g );
     }
 
     abstract void update();
 
-    public void nextFrame() {
+    abstract void paintChild( Graphics2D g );
+
+    public void nextFrame( double speed ) {
         if( t > Double.MAX_VALUE - 300 ) {
             t = 0;
         } else {
-            t += 0.01;
+            t += speed;
         }
 
         update();

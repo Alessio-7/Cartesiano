@@ -8,7 +8,7 @@ public class OndaQuadra extends Function<Double> {
 
 
     public OndaQuadra( double f ) {
-        int l = 100;
+        int l = 5;
         sins = new Sin[l];
         for( int i = 1; i < l + 1; i++ ) {
             double fattore = (double) (2 * i) - 1;
