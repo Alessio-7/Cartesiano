@@ -15,8 +15,8 @@ public class Main extends JFrame {
         setLayout( new BorderLayout() );
 
         //setLocationRelativeTo( null );
-        setLocation( -1108, 4 );
-        //setLocation( 100, 10 );
+        //setLocation( -1108, 4 );
+        setLocation( 100, 10 );
         add( plane );
         pack();
         setVisible( true );
@@ -35,12 +35,29 @@ public class Main extends JFrame {
 
         int SIZE = 1000;
         double scale = 100d; // quanti pixel sono una unita'
+        //double speed = 0.01d;
         double speed = 0.01d;
 
-        RealPlane p = new RealPlane( SIZE, scale );
+        //RealPlane p = new RealPlane( SIZE, scale );
         //p.addFunzione( new Sin( 1, 1 ) );
+        //p.addFunzione( new OndaQuadra( 0.2 ) );
 
-        p.addFunzione( new OndaQuadra( 1 / 5d ) );
+        ComplexPlane p = new ComplexPlane( SIZE, scale );
+
+        p.addFunzione( new Function<Complex>() {
+
+            double a;
+
+            @Override
+            Complex f( Complex x ) {
+                return x.times( new Complex( 0, a ) );
+            }
+
+            @Override
+            void update( double t ) {
+                this.a = t;
+            }
+        } );
 
         new Main( p, speed );
     }

@@ -40,23 +40,6 @@ abstract class Plane<T> extends JPanel {
         g.setRenderingHint( RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY );
         g.setRenderingHint( RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE );
 
-        //g.setBackground( Color.white );
-        g.setColor( Color.black );
-        g.fillRect( 0, 0, SIZE, SIZE );
-
-        g.setStroke( new BasicStroke( 1 ) );
-
-        g.setColor( Color.gray );
-        g.drawLine( 0, HALF_SIZE, SIZE, HALF_SIZE );
-        for( int x = scaleInt; x < SIZE; x += scaleInt ) {
-            g.drawLine( x, HALF_SIZE - 3, x, HALF_SIZE + 3 );
-        }
-
-        g.drawLine( HALF_SIZE, 0, HALF_SIZE, SIZE );
-        for( int y = scaleInt; y < SIZE; y += scaleInt ) {
-            g.drawLine( HALF_SIZE - 3, y, HALF_SIZE + 3, y );
-        }
-
         paintChild( g );
     }
 

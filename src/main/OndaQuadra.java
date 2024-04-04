@@ -12,7 +12,7 @@ public class OndaQuadra extends Function<Double> {
         sins = new Sin[l];
         for( int i = 1; i < l + 1; i++ ) {
             double fattore = (double) (2 * i) - 1;
-            sins[i - 1] = new Sin( fattore * twopi * f, 1d / fattore );
+            sins[i - 1] = new Sin( fattore * f, 1d / fattore );
         }
     }
 
