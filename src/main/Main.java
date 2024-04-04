@@ -34,7 +34,7 @@ public class Main extends JFrame {
     public static void main( String[] args ) {
 
         int SIZE = 1000;
-        double scale = 100d; // quanti pixel sono una unita'
+        double scale = 200; // quanti pixel sono una unita'
         //double speed = 0.01d;
         double speed = 0.01d;
 
@@ -50,7 +50,8 @@ public class Main extends JFrame {
 
             @Override
             Complex f( Complex x ) {
-                return x.times( new Complex( 0, a ) );
+                //return x.times( x ).times( x ).sum( new Complex( 1, 0 ) );
+                return x;
             }
 
             @Override

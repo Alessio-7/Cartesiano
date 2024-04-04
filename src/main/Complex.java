@@ -15,7 +15,7 @@ public record Complex(double a, double b) {
     }
 
     public double phase() {
-        return Math.toDegrees( Math.atan( b / a ) );
+        return Math.toDegrees( Math.atan2( b, a ) );
     }
 
     public double mod() {
