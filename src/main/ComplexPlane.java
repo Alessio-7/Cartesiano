@@ -13,64 +13,66 @@ public class ComplexPlane extends Plane<Complex> {
         plane = new BufferedImage( SIZE, SIZE, BufferedImage.TYPE_INT_RGB );
     }
 
-    public static int hsvToRgb( float H, float S, float V ) {
-
-        float R = 0, G = 0, B = 0;
-
-        H /= 360f;
-        //S /= 100f;
-        //V /= 100f;
-
-        if( S == 0 ) {
-            R = V * 255;
-            G = V * 255;
-            B = V * 255;
-        } else {
-            float var_h = H * 6;
-            if( var_h == 6 ) var_h = 0; // H must be < 1
-            int var_i = (int) Math.floor( var_h ); // Or ... var_i =
-            // floor( var_h )
-            float var_1 = V * (1 - S);
-            float var_2 = V * (1 - S * (var_h - var_i));
-            float var_3 = V * (1 - S * (1 - (var_h - var_i)));
-
-            float var_r;
-            float var_g;
-            float var_b;
-            if( var_i == 0 ) {
-                var_r = V;
-                var_g = var_3;
-                var_b = var_1;
-            } else if( var_i == 1 ) {
-                var_r = var_2;
-                var_g = V;
-                var_b = var_1;
-            } else if( var_i == 2 ) {
-                var_r = var_1;
-                var_g = V;
-                var_b = var_3;
-            } else if( var_i == 3 ) {
-                var_r = var_1;
-                var_g = var_2;
-                var_b = V;
-            } else if( var_i == 4 ) {
-                var_r = var_3;
-                var_g = var_1;
-                var_b = V;
-            } else {
-                var_r = V;
-                var_g = var_1;
-                var_b = var_2;
-            }
-
-            R = var_r * 255; // RGB results from 0 to 255
-            G = var_g * 255;
-            B = var_b * 255;
+    public static int hslToRgb( float h, float s, float l ) {
+        if( s < 0.0f || s > 100.0f ) {
+            String message = "Color parameter outside of expected range - Saturation";
+            throw new IllegalArgumentException( message );
         }
 
-        //System.out.println( Arrays.toString( new float[]{R, G, B} ) );
+        if( l < 0.0f || l > 100.0f ) {
+            String message = "Color parameter outside of expected range - Luminance";
+            throw new IllegalArgumentException( message );
+        }
 
-        return new Color( (int) R, (int) G, (int) B ).getRGB();
+        //  Formula needs all values between 0 - 1.
+
+        if( h < 0 )
+            h += 360;
+
+        h = h % 360.0f;
+        h /= 360f;
+        //s /= 100f;
+        //l /= 100f;
+
+        float q = 0;
+
+        if( l < 0.5 )
+            q = l * (1 + s);
+        else
+            q = (l + s) - (s * l);
+
+        float p = 2 * l - q;
+
+        float r = Math.max( 0, HueToRGB( p, q, h + (1.0f / 3.0f) ) );
+        float g = Math.max( 0, HueToRGB( p, q, h ) );
+        float b = Math.max( 0, HueToRGB( p, q, h - (1.0f / 3.0f) ) );
+
+
+        r = Math.min( r, 1.0f );
+        g = Math.min( g, 1.0f );
+        b = Math.min( b, 1.0f );
+
+        return new Color( r, g, b ).getRGB();
+    }
+
+    private static float HueToRGB( float p, float q, float h ) {
+        if( h < 0 ) h += 1;
+
+        if( h > 1 ) h -= 1;
+
+        if( 6 * h < 1 ) {
+            return p + ((q - p) * 6 * h);
+        }
+
+        if( 2 * h < 1 ) {
+            return q;
+        }
+
+        if( 3 * h < 2 ) {
+            return p + ((q - p) * 6 * ((2.0f / 3.0f) - h));
+        }
+
+        return p;
     }
 
     void grid() {
@@ -128,11 +130,13 @@ public class ComplexPlane extends Plane<Complex> {
             for( int y = 0; y < SIZE; y++ ) {
 
                 double a = (x - HALF_SIZE) / scale;
-                double b = (y - HALF_SIZE) / scale;
+                double b = -(y - HALF_SIZE) / scale;
 
                 z = f.f( new Complex( a, b ) );
+
+
                 //plane.setRGB( x, y, hsvToRgb( (float) z.phase(), 1f, (float) (Math.atan( z.mod() ) * (2 / Math.PI)) ) );
-                plane.setRGB( x, y, hsvToRgb( (float) z.phase(), 1f, (float) (Math.atan( z.mod() ) * 2 / Math.PI) ) );
+                plane.setRGB( x, y, hslToRgb( (float) (z.phase() + ((2 * Math.PI) / 3)), 1f, (float) (Math.atan( z.mod() ) * 2 / Math.PI) ) );
             }
         }
     }
@@ -141,7 +145,6 @@ public class ComplexPlane extends Plane<Complex> {
     void update() {
 
         color();
-
     }
 
     @Override

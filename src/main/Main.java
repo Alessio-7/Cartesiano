@@ -34,29 +34,31 @@ public class Main extends JFrame {
     public static void main( String[] args ) {
 
         int SIZE = 1000;
-        double scale = 200; // quanti pixel sono una unita'
-        //double speed = 0.01d;
-        double speed = 0.01d;
+        double scale = 100; // quanti pixel sono una unita'
+        double speed = 0.1d;
 
         //RealPlane p = new RealPlane( SIZE, scale );
         //p.addFunzione( new Sin( 1, 1 ) );
         //p.addFunzione( new OndaQuadra( 0.2 ) );
 
+        System.out.println( new Complex( -1, 1 ).timesIm( 1 ) );
+
         ComplexPlane p = new ComplexPlane( SIZE, scale );
 
         p.addFunzione( new Function<Complex>() {
 
-            double a;
+            double v;
 
             @Override
             Complex f( Complex x ) {
-                //return x.times( x ).times( x ).sum( new Complex( 1, 0 ) );
-                return x;
+                return x.times( x ).times( x ).sum( new Complex( 1, 0 ) );
+                //System.out.println( tempo );
+                //return x.times( new Complex( 5, 2 ) );
             }
 
             @Override
             void update( double t ) {
-                this.a = t;
+                v = Math.atan( t );
             }
         } );
 

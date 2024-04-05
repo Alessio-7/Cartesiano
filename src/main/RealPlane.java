@@ -18,7 +18,6 @@ public class RealPlane extends Plane<Double> {
             double x1 = (x - HALF_SIZE) / scale;
             int i = 0;
             for( Function<Double> funz : funzioni ) {
-                funz.update( t );
                 int y = (int) -((funz.f( x1 ) * scale) - HALF_SIZE);
                 ys[i][x] = y;
                 i++;

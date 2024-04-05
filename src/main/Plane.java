@@ -54,6 +54,8 @@ abstract class Plane<T> extends JPanel {
             t += speed;
         }
 
+        for( Function<T> f : funzioni )
+            f.update( t );
         update();
         repaint();
     }
