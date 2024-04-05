@@ -90,8 +90,8 @@ public class ComplexPlane extends Plane<Complex> {
 
                 z = f.f( new Complex( a, b ) );
 
-                int x1 = (int) -((z.a() * scale) - HALF_SIZE);
-                int y1 = (int) -((z.b() * scale) - HALF_SIZE);
+                int x1 = (int) -((z.a * scale) - HALF_SIZE);
+                int y1 = (int) -((z.b * scale) - HALF_SIZE);
 
                 if( x1 < SIZE && x1 > 0 && y1 < SIZE && y1 > 0 ) {
                     plane.setRGB( x1, y1, (a == 0 ? Color.cyan : Color.gray).getRGB() );
@@ -107,8 +107,8 @@ public class ComplexPlane extends Plane<Complex> {
 
                 z = f.f( new Complex( a, b ) );
 
-                int x1 = (int) -((z.a() * scale) - HALF_SIZE);
-                int y1 = (int) -((z.b() * scale) - HALF_SIZE);
+                int x1 = (int) -((z.a * scale) - HALF_SIZE);
+                int y1 = (int) -((z.b * scale) - HALF_SIZE);
 
                 if( x1 < SIZE && x1 > 0 && y1 < SIZE && y1 > 0 ) {
                     plane.setRGB( x1, y1, (b == 0 ? Color.cyan : Color.gray).getRGB() );
@@ -134,8 +134,7 @@ public class ComplexPlane extends Plane<Complex> {
 
                 z = f.f( new Complex( a, b ) );
 
-
-                //plane.setRGB( x, y, hsvToRgb( (float) z.phase(), 1f, (float) (Math.atan( z.mod() ) * (2 / Math.PI)) ) );
+                //plane.setRGB( x, y, Color.getHSBColor( (float) z.phase(), (float) (Math.atan( z.mod() ) * (2 / Math.PI)), 1f ).getRGB() );
                 plane.setRGB( x, y, hslToRgb( (float) (z.phase() + ((2 * Math.PI) / 3)), 1f, (float) (Math.atan( z.mod() ) * 2 / Math.PI) ) );
             }
         }

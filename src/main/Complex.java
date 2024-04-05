@@ -1,6 +1,15 @@
 package main;
 
-public record Complex(double a, double b) {
+public class Complex {
+
+    double a;
+    double b;
+
+    public Complex( double a, double b ) {
+
+        this.a = a;
+        this.b = b;
+    }
 
     // TODO rifare
     public static Complex exp( Complex z ) {
@@ -24,10 +33,8 @@ public record Complex(double a, double b) {
         return new Complex( (a * z.a) - (b * z.b), (a * z.b) + (b * z.a) );
     }
 
-    // TODO rifare
     public Complex over( Complex z ) {
-        double mod2 = (z.a * z.a) + (z.b * z.b);
-        return new Complex( ((a * z.a) + (b * z.b)), ((b * z.a) + (a * z.b)) ).timesRe( 1d / mod2 );
+        return new Complex( ((a * z.a) + (b * z.b)), ((b * z.a) - (a * z.b)) ).timesRe( 1d / ((z.a * z.a) + (z.b * z.b)) );
     }
 
     public Complex sum( Complex z ) {

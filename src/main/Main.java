@@ -17,6 +17,7 @@ public class Main extends JFrame {
         //setLocationRelativeTo( null );
         //setLocation( -1108, 4 );
         setLocation( 100, 10 );
+        setResizable( false );
         add( plane );
         pack();
         setVisible( true );
@@ -33,7 +34,7 @@ public class Main extends JFrame {
 
     public static void main( String[] args ) {
 
-        int SIZE = 1000;
+        int SIZE = 500;
         double scale = 100; // quanti pixel sono una unita'
         double speed = 0.1d;
 
@@ -41,24 +42,24 @@ public class Main extends JFrame {
         //p.addFunzione( new Sin( 1, 1 ) );
         //p.addFunzione( new OndaQuadra( 0.2 ) );
 
-        System.out.println( new Complex( -1, 1 ).timesIm( 1 ) );
-
         ComplexPlane p = new ComplexPlane( SIZE, scale );
+
+        // p.addFunzione( new Mandelbrot( 1000, 0 ) );
 
         p.addFunzione( new Function<Complex>() {
 
-            double v;
+            double x;
+            double y;
 
             @Override
             Complex f( Complex x ) {
-                return x.times( x ).times( x ).sum( new Complex( 1, 0 ) );
-                //System.out.println( tempo );
-                //return x.times( new Complex( 5, 2 ) );
+                return x.times( x ).sum( new Complex( this.x, y ) );
             }
 
             @Override
             void update( double t ) {
-                v = Math.atan( t );
+                x = Math.cos( t );
+                y = Math.sin( t );
             }
         } );
 
