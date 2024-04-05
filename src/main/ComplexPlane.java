@@ -6,11 +6,13 @@ import java.awt.image.BufferedImage;
 public class ComplexPlane extends Plane<Complex> {
 
     BufferedImage plane;
+    BufferedImage nextPlane;
 
     public ComplexPlane( int SIZE, double scale ) {
         super( SIZE, scale );
 
         plane = new BufferedImage( SIZE, SIZE, BufferedImage.TYPE_INT_RGB );
+        nextPlane = new BufferedImage( SIZE, SIZE, BufferedImage.TYPE_INT_RGB );
     }
 
     public static int hslToRgb( float h, float s, float l ) {
@@ -34,7 +36,7 @@ public class ComplexPlane extends Plane<Complex> {
         //s /= 100f;
         //l /= 100f;
 
-        float q = 0;
+        float q;
 
         if( l < 0.5 )
             q = l * (1 + s);
@@ -135,7 +137,7 @@ public class ComplexPlane extends Plane<Complex> {
                 z = f.f( new Complex( a, b ) );
 
                 //plane.setRGB( x, y, Color.getHSBColor( (float) z.phase(), (float) (Math.atan( z.mod() ) * (2 / Math.PI)), 1f ).getRGB() );
-                plane.setRGB( x, y, hslToRgb( (float) (z.phase() + ((2 * Math.PI) / 3)), 1f, (float) (Math.atan( z.mod() ) * 2 / Math.PI) ) );
+                plane.setRGB( x, y, hslToRgb( (float) (z.phaseDeg() + ((2 * Math.PI) / 3)), 1f, (float) (Math.atan( z.mod() ) * 2 / Math.PI) ) );
             }
         }
     }

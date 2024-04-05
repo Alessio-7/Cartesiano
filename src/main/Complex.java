@@ -11,14 +11,31 @@ public class Complex {
         this.b = b;
     }
 
-    // TODO rifare
+    public static Complex exp( double phase ) {
+        return exp( new Complex( 0, phase ) );
+    }
+
     public static Complex exp( Complex z ) {
         return new Complex( Math.cos( z.b ), Math.sin( z.b ) ).timesRe( Math.exp( z.a ) );
     }
 
-    // TODO rifare
     public static Complex sin( Complex z ) {
         return Complex.exp( z.timesIm( 1 ) ).sub( Complex.exp( z.timesIm( -1 ) ) ).over( new Complex( 0, 2 ) );
+    }
+
+    public Complex pow( int p ) {
+        Complex z = this;
+
+        if( p == 1 )
+            return this;
+
+        if( p == 0 )
+            return new Complex( 1, 0 );
+
+        for( int i = 1; i < p; i++ )
+            z = z.times( this );
+
+        return z;
     }
 
     public Complex timesIm( double im ) {
@@ -45,14 +62,22 @@ public class Complex {
         return new Complex( a - z.a, b - z.b );
     }
 
-    public double phase() {
+    public double phaseRad() {
+        return Math.atan2( b, a );
+    }
+
+    public double phaseDeg() {
         //double p = Math.toDegrees( Math.atan2( b, a ) );
         //return p < 0 ? p + 360 : p;
-        return Math.toDegrees( Math.atan2( b, a ) );
+        return Math.toDegrees( phaseRad() );
     }
 
     public double mod() {
         return Math.sqrt( Math.pow( a, 2 ) + Math.pow( b, 2 ) );
+    }
+
+    public Complex conjugate() {
+        return new Complex( a, -b );
     }
 
     @Override
