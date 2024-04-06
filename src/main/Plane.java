@@ -47,6 +47,14 @@ abstract class Plane<T> extends JPanel {
 
     abstract void paintChild( Graphics2D g );
 
+    public double pixelToCord( int p ) {
+        return (p - HALF_SIZE) / scale;
+    }
+
+    public int cordToPixel( double c ) {
+        return (int) ((c * scale) - HALF_SIZE);
+    }
+
     public void nextFrame( double speed ) {
         if( t > Double.MAX_VALUE - 300 ) {
             t = 0;

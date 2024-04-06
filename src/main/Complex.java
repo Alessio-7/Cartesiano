@@ -2,11 +2,10 @@ package main;
 
 public class Complex {
 
-    double a;
-    double b;
+    final double a;
+    final double b;
 
     public Complex( double a, double b ) {
-
         this.a = a;
         this.b = b;
     }
@@ -21,6 +20,10 @@ public class Complex {
 
     public static Complex sin( Complex z ) {
         return Complex.exp( z.timesIm( 1 ) ).sub( Complex.exp( z.timesIm( -1 ) ) ).over( new Complex( 0, 2 ) );
+    }
+
+    public static Complex fromVec2( Vec2 v ) {
+        return new Complex( v.a, v.b );
     }
 
     public Complex pow( int p ) {
@@ -62,18 +65,16 @@ public class Complex {
         return new Complex( a - z.a, b - z.b );
     }
 
+    public double mod() {
+        return Math.sqrt( a * a + b * b );
+    }
+
     public double phaseRad() {
         return Math.atan2( b, a );
     }
 
     public double phaseDeg() {
-        //double p = Math.toDegrees( Math.atan2( b, a ) );
-        //return p < 0 ? p + 360 : p;
         return Math.toDegrees( phaseRad() );
-    }
-
-    public double mod() {
-        return Math.sqrt( Math.pow( a, 2 ) + Math.pow( b, 2 ) );
     }
 
     public Complex conjugate() {
@@ -83,5 +84,9 @@ public class Complex {
     @Override
     public String toString() {
         return a + (b < 0 ? "" : "+") + b + "i";
+    }
+
+    public Vec2 toVec2() {
+        return new Vec2( a, b );
     }
 }

@@ -15,10 +15,10 @@ public class RealPlane extends Plane<Double> {
         ys = new int[funzioni.size()][SIZE];
 
         for( int x = 0; x < SIZE; x++ ) {
-            double x1 = (x - HALF_SIZE) / scale;
+            double x1 = pixelToCord( x );
             int i = 0;
             for( Function<Double> funz : funzioni ) {
-                int y = (int) -((funz.f( x1 ) * scale) - HALF_SIZE);
+                int y = -cordToPixel( funz.f( x1 ) );
                 ys[i][x] = y;
                 i++;
             }

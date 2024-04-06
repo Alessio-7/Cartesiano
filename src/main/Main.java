@@ -38,10 +38,12 @@ public class Main extends JFrame {
         //p.addFunzione( new Sin( 1, 1 ) );
         //p.addFunzione( new OndaQuadra( 0.2 ) );
 
-        Particle prt = new Particle( 3.14, 16, 28 );
+        //Particle prt = new Particle( 3.14, 16, 28 );
 
-        p.addFunzione( prt );
-        p.addFunzione( prt.getImaginaryPart() );
+        //p.addFunzione( prt );
+        //p.addFunzione( prt.getImaginaryPart() );
+
+        p.addFunzione( new OndaQuadra( 1 ) );
 
 
         return p;
@@ -50,7 +52,7 @@ public class Main extends JFrame {
     public static Plane setupComplex( int SIZE, double scale ) {
         ComplexPlane p = new ComplexPlane( SIZE, scale );
 
-        // p.addFunzione( new Mandelbrot( 1000, 0 ) );
+        //p.addFunzione( new Mandelbrot( 1000, -5 ) );
         p.addFunzione( new Function<Complex>() {
 
             double x, y;
@@ -58,6 +60,7 @@ public class Main extends JFrame {
             @Override
             Complex f( Complex x ) {
                 return x.pow( 5 ).sum( new Complex( this.x, y ) );
+                //return Complex.exp( x );
             }
 
             @Override
@@ -71,17 +74,18 @@ public class Main extends JFrame {
     }
 
 
-    public static Plane setupVectorComplex( int SIZE, double scale ) {
+    public static Plane setupVector( int SIZE, double scale ) {
 
-        VectorComplexPlane p = new VectorComplexPlane( SIZE, scale );
+        VectorPlane p = new VectorPlane( SIZE, scale );
 
-        p.addFunzione( new Function<Complex>() {
+        p.addFunzione( new Function<Vec2>() {
 
             double x, y;
 
             @Override
-            Complex f( Complex x ) {
-                return x.pow( 5 ).sum( new Complex( this.x, y ) );
+            Vec2 f( Vec2 v ) {
+                Complex z = Complex.fromVec2( v );
+                return z.pow( 7 ).sum( new Complex( x, y ) ).toVec2();
             }
 
             @Override
@@ -99,11 +103,13 @@ public class Main extends JFrame {
 
         int SIZE = 1000;
         double scale = 200; // quanti pixel sono una unita'
-        double speed = 0.01d;
+        double speed = 0.1d;
 
         //new Main( setupReal( SIZE, scale ), speed );
-        new Main( setupComplex( 700, scale ), speed );
-        //new Main( setupVectorComplex( SIZE, scale ), speed );
+        //new Main( setupComplex( 700, scale ), speed );
+        new Main( setupVector( SIZE, scale ), speed );
+
+        VectorPlane p = new VectorPlane( 0, 0 );
     }
 
 }
