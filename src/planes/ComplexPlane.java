@@ -1,22 +1,24 @@
-package main;
+package planes;
+
+import funcs.Function;
+import main.ColorUtils;
+import primitives.Complex;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class ComplexPlane extends Plane<Complex> {
 
-    BufferedImage plane;
-    BufferedImage nextPlane;
+    private final BufferedImage plane;
 
     public ComplexPlane( int SIZE, double scale ) {
         super( SIZE, scale );
 
         plane = new BufferedImage( SIZE, SIZE, BufferedImage.TYPE_INT_RGB );
-        nextPlane = new BufferedImage( SIZE, SIZE, BufferedImage.TYPE_INT_RGB );
     }
 
 
-    void grid() {
+    private void grid() {
 
         if( funzioni.isEmpty() ) return;
 
@@ -60,7 +62,7 @@ public class ComplexPlane extends Plane<Complex> {
 
     }
 
-    void color() {
+    private void color() {
         if( funzioni.isEmpty() ) return;
 
         Function<Complex> f = funzioni.get( 0 );
@@ -82,12 +84,12 @@ public class ComplexPlane extends Plane<Complex> {
     }
 
     @Override
-    void update() {
+    protected void update() {
         color();
     }
 
     @Override
-    void paintChild( Graphics2D g ) {
+    protected void paintChild( Graphics2D g ) {
         g.drawImage( plane, 0, 0, null );
     }
 }

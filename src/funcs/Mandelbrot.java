@@ -1,9 +1,11 @@
-package main;
+package funcs;
+
+import primitives.Complex;
 
 public class Mandelbrot extends Function<Complex> {
 
-    double iterations;
-    double xTraslation;
+    private final double iterations;
+    private final double xTraslation;
 
     public Mandelbrot( double iterations, double xTraslation ) {
         this.iterations = iterations;
@@ -11,7 +13,7 @@ public class Mandelbrot extends Function<Complex> {
     }
 
     @Override
-    Complex f( Complex x ) {
+    public Complex f( Complex x ) {
 
         Complex c = x.sum( new Complex( xTraslation, 0 ) );
 
@@ -23,7 +25,7 @@ public class Mandelbrot extends Function<Complex> {
     }
 
     @Override
-    void update( double t ) {
+    public void update( double t ) {
 
     }
 }

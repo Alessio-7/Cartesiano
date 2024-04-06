@@ -1,9 +1,9 @@
-package main;
+package primitives;
 
 public class Complex {
 
-    final double a;
-    final double b;
+    public final double a;
+    public final double b;
 
     public Complex( double a, double b ) {
         this.a = a;

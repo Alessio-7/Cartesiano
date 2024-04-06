@@ -1,4 +1,4 @@
-package main;
+package funcs;
 
 public class OndaQuadra extends Function<Double> {
 
@@ -17,7 +17,7 @@ public class OndaQuadra extends Function<Double> {
     }
 
     @Override
-    Double f( Double x ) {
+    public Double f( Double x ) {
         double y = 0;
 
         for( Sin s : sins ) {
@@ -28,7 +28,7 @@ public class OndaQuadra extends Function<Double> {
     }
 
     @Override
-    void update( double t ) {
+    public void update( double t ) {
         this.t = t;
     }
 }

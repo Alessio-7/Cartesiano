@@ -1,9 +1,9 @@
-package main;
+package primitives;
 
 public class Vec2 {
 
-    final double a;
-    final double b;
+    public final double a;
+    public final double b;
 
     public Vec2( double a, double b ) {
         this.a = a;

@@ -1,17 +1,19 @@
-package main;
+package planes;
+
+import funcs.Function;
 
 import java.awt.*;
 
 public class RealPlane extends Plane<Double> {
 
-    int[][] ys;
+    private int[][] ys;
 
     public RealPlane( int SIZE, double scale ) {
         super( SIZE, scale );
     }
 
     @Override
-    void update() {
+    protected void update() {
         ys = new int[funzioni.size()][SIZE];
 
         for( int x = 0; x < SIZE; x++ ) {
@@ -26,7 +28,7 @@ public class RealPlane extends Plane<Double> {
     }
 
     @Override
-    public void paintChild( Graphics2D g ) {
+    protected void paintChild( Graphics2D g ) {
         g.setColor( Color.black );
         g.fillRect( 0, 0, SIZE, SIZE );
 

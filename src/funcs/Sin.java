@@ -1,11 +1,11 @@
-package main;
+package funcs;
 
 public class Sin extends Function<Double> {
 
-    double freq;
-    double phase;
-    double ampl;
-    double twopi = 2d * Math.PI;
+    private final double twopi = 2d * Math.PI;
+    private final double freq;
+    private double phase;
+    private final double ampl;
 
     public Sin( double phase, double freq, double ampl ) {
         this.freq = freq;
@@ -22,7 +22,7 @@ public class Sin extends Function<Double> {
     }
 
     @Override
-    void update( double t ) {
+    public void update( double t ) {
         phase = t;
     }
 }

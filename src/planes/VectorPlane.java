@@ -1,11 +1,15 @@
-package main;
+package planes;
+
+import funcs.Function;
+import main.ColorUtils;
+import primitives.Vec2;
 
 import java.awt.*;
 
 public class VectorPlane extends Plane<Vec2> {
 
-    InfoVec[][] vecs;
-    double space = 20;
+    private final InfoVec[][] vecs;
+    private final double space = 20;
 
     public VectorPlane( int SIZE, double scale ) {
         super( SIZE, scale );
@@ -15,7 +19,7 @@ public class VectorPlane extends Plane<Vec2> {
     }
 
     @Override
-    void update() {
+    protected void update() {
 
         if( funzioni.isEmpty() ) return;
 
@@ -25,9 +29,9 @@ public class VectorPlane extends Plane<Vec2> {
 
         int i = 0, j;
 
-        for( int x = 0; x < SIZE; x += space ) {
+        for( int x = (int) ((SIZE % space) / 2); x < SIZE; x += space ) {
             j = 0;
-            for( int y = 0; y < SIZE; y += space ) {
+            for( int y = (int) ((SIZE % space) / 2); y < SIZE; y += space ) {
 
                 double a = pixelToCord( x );
                 double b = -pixelToCord( y );
@@ -49,7 +53,7 @@ public class VectorPlane extends Plane<Vec2> {
     }
 
     @Override
-    void paintChild( Graphics2D g ) {
+    protected void paintChild( Graphics2D g ) {
         g.setColor( Color.black );
         g.fillRect( 0, 0, SIZE, SIZE );
 
@@ -78,5 +82,4 @@ public class VectorPlane extends Plane<Vec2> {
             this.c = c;
         }
     }
-
 }

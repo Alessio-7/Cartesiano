@@ -1,21 +1,21 @@
-package main;
+package planes;
+
+import funcs.Function;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-abstract class Plane<T> extends JPanel {
+public abstract class Plane<T> extends JPanel {
 
-    public int SIZE;
-    public int HALF_SIZE;
+    protected final int SIZE;
+    protected final int HALF_SIZE;
+    protected final double scale;
+    protected final int scaleInt;
+    protected double t = 0;
+    protected ArrayList<Function<T>> funzioni;
 
-    public double t = 0;
-    public double scale;
-    public int scaleInt;
-
-    public ArrayList<Function<T>> funzioni;
-
-    public Plane( int SIZE, double scale ) {
+    protected Plane( int SIZE, double scale ) {
         this.SIZE = SIZE;
         this.HALF_SIZE = SIZE / 2;
         this.scale = scale;
@@ -43,15 +43,15 @@ abstract class Plane<T> extends JPanel {
         paintChild( g );
     }
 
-    abstract void update();
+    protected abstract void update();
 
-    abstract void paintChild( Graphics2D g );
+    protected abstract void paintChild( Graphics2D g );
 
-    public double pixelToCord( int p ) {
+    protected double pixelToCord( int p ) {
         return (p - HALF_SIZE) / scale;
     }
 
-    public int cordToPixel( double c ) {
+    protected int cordToPixel( double c ) {
         return (int) ((c * scale) - HALF_SIZE);
     }
 
