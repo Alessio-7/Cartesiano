@@ -51,14 +51,13 @@ public class Main extends JFrame {
         ComplexPlane p = new ComplexPlane( SIZE, scale );
 
         // p.addFunzione( new Mandelbrot( 1000, 0 ) );
-
         p.addFunzione( new Function<Complex>() {
 
             double x, y;
 
             @Override
             Complex f( Complex x ) {
-                return x.pow( 3 ).sum( new Complex( this.x, y ) );
+                return x.pow( 5 ).sum( new Complex( this.x, y ) );
             }
 
             @Override
@@ -82,7 +81,7 @@ public class Main extends JFrame {
 
             @Override
             Complex f( Complex x ) {
-                return x.pow( 3 ).sum( new Complex( this.x, y ) );
+                return x.pow( 5 ).sum( new Complex( this.x, y ) );
             }
 
             @Override
@@ -99,11 +98,12 @@ public class Main extends JFrame {
     public static void main( String[] args ) {
 
         int SIZE = 1000;
-        double scale = 300; // quanti pixel sono una unita'
+        double scale = 200; // quanti pixel sono una unita'
         double speed = 0.01d;
 
         //new Main( setupReal( SIZE, scale ), speed );
-        new Main( setupVectorComplex( SIZE, scale ), speed );
+        new Main( setupComplex( 700, scale ), speed );
+        //new Main( setupVectorComplex( SIZE, scale ), speed );
     }
 
 }

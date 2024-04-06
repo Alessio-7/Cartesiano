@@ -6,13 +6,12 @@ public class VectorComplexPlane extends Plane<Complex> {
 
 
     Vec3[][] vecs;
-    double space = 30;
+    double space = 20;
 
     public VectorComplexPlane( int SIZE, double scale ) {
         super( SIZE, scale );
 
         int l = (int) (SIZE / space);
-        System.out.println( l );
         vecs = new Vec3[l + 1][l + 1];
     }
 
@@ -48,11 +47,7 @@ public class VectorComplexPlane extends Plane<Complex> {
                 double phase = z.phaseRad();
 
 
-                vecs[i][j] = new Vec3(
-                        (int) (x + Math.cos( phase ) * (space - 5)),
-                        (int) (y + Math.sin( phase ) * (space - 5)),
-                        new Color( interpolateColor( Color.blue, Color.yellow, (Math.atan( z.mod() ) * 2 / Math.PI) ) ).getRGB()
-                );
+                vecs[i][j] = new Vec3( (int) (x + Math.cos( phase ) * (space - 5)), (int) (y + Math.sin( phase ) * (space - 5)), new Color( interpolateColor( Color.blue, Color.yellow, (Math.atan( z.mod() ) * 2 / Math.PI) ) ).getRGB() );
                 j++;
             }
             i++;
