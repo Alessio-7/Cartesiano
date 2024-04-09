@@ -14,8 +14,8 @@ public class VectorPlane extends Plane<Vec2> {
     public VectorPlane( int SIZE, double scale ) {
         super( SIZE, scale );
 
-        int l = (int) (SIZE / space);
-        vecs = new InfoVec[l + 1][l + 1];
+        int l = (int) ((SIZE / space)+1);
+        vecs = new InfoVec[l][l];
     }
 
     @Override
