@@ -9,10 +9,12 @@ import java.awt.*;
 public class VectorPlane extends Plane<Vec2> {
 
     private final InfoVec[][] vecs;
-    private final double space = 20;
+    private final double space;
 
     public VectorPlane( int SIZE, double scale ) {
         super( SIZE, scale );
+
+        space = scale/10;
 
         int l = (int) ((SIZE / space)+1);
         vecs = new InfoVec[l][l];
@@ -54,7 +56,12 @@ public class VectorPlane extends Plane<Vec2> {
 
     @Override
     protected void paintChild( Graphics2D g ) {
+
+        int strokeSize = (int) ((BasicStroke)g.getStroke()).getLineWidth()+2;
+        int vecHeadSize = (int) (strokeSize*1.9);
+
         g.setColor( Color.black );
+        g.setStroke(new BasicStroke(strokeSize));
         g.fillRect( 0, 0, SIZE, SIZE );
 
         int i = 0, j;
@@ -66,7 +73,7 @@ public class VectorPlane extends Plane<Vec2> {
 
                 g.setColor( new Color( v.c ) );
                 g.drawLine( x, y, v.x, v.y );
-                g.fillRect( v.x - 1, v.y - 1, 3, 3 );
+                g.fillRect( v.x - (vecHeadSize/2), v.y - (vecHeadSize/2), vecHeadSize, vecHeadSize);
                 j++;
             }
             i++;

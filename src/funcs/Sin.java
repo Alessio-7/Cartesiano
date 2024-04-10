@@ -1,6 +1,6 @@
 package funcs;
 
-public class Sin extends Function<Double> {
+public class Sin implements Function<Double> {
 
     private final double twopi = 2d * Math.PI;
     private final double freq;

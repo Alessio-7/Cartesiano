@@ -2,7 +2,7 @@ package funcs;
 
 import primitives.Complex;
 
-public class Mandelbrot extends Function<Complex> {
+public class Mandelbrot implements Function<Complex> {
 
     private final double iterations;
     private final double xTraslation;

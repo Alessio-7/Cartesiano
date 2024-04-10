@@ -10,12 +10,15 @@ public class Complex {
         this.b = b;
     }
 
+    public static Complex fromPolar(double r, double theta){
+        return Complex.exp(theta).timesRe(r);
+    }
     public static Complex exp( double phase ) {
-        return exp( new Complex( 0, phase ) );
+        return new Complex( Math.cos( phase ), Math.sin( phase ) );
     }
 
     public static Complex exp( Complex z ) {
-        return new Complex( Math.cos( z.b ), Math.sin( z.b ) ).timesRe( Math.exp( z.a ) );
+        return fromPolar(z.b, Math.exp( z.a ) );
     }
 
     public static Complex sin( Complex z ) {
@@ -27,18 +30,7 @@ public class Complex {
     }
 
     public Complex pow( int p ) {
-        Complex z = this;
-
-        if( p == 1 )
-            return this;
-
-        if( p == 0 )
-            return new Complex( 1, 0 );
-
-        for( int i = 1; i < p; i++ )
-            z = z.times( this );
-
-        return z;
+        return Complex.fromPolar(Math.pow(mod(),p), phaseRad()*p);
     }
 
     public Complex timesIm( double im ) {

@@ -10,7 +10,7 @@ public abstract class Plane<T> extends JPanel {
 
     protected final int SIZE;
     protected final int HALF_SIZE;
-    protected final double scale;
+    protected double scale;
     protected final int scaleInt;
     protected double t = 0;
     protected ArrayList<Function<T>> funzioni;
@@ -47,8 +47,11 @@ public abstract class Plane<T> extends JPanel {
 
     protected abstract void paintChild( Graphics2D g );
 
+    protected double pixelToCord(int p, int halfSize){
+        return (p-halfSize)/scale;
+    }
     protected double pixelToCord( int p ) {
-        return (p - HALF_SIZE) / scale;
+        return pixelToCord(p, HALF_SIZE);
     }
 
     protected int cordToPixel( double c ) {

@@ -2,7 +2,7 @@ package funcs;
 
 import primitives.Complex;
 
-public class Particle extends Function<Double> {
+public class Particle implements Function<Double> {
 
     Complex z;
     private final double A;

@@ -80,7 +80,7 @@ public class Main extends JFrame {
             @Override
             public Vec2 f( Vec2 v ) {
                 Complex z = Complex.fromVec2( v );
-                return z.pow( 7 ).sum( new Complex( x, y ) ).toVec2();
+                return z.pow( 12 ).sum( new Complex( x, y ) ).toVec2();
             }
 
             @Override
@@ -96,12 +96,14 @@ public class Main extends JFrame {
 
     public static void main( String[] args ) {
 
-        int SIZE = 1000;
-        double scale = 200; // quanti pixel sono una unita'
-        double speed = 0.01d;
+        int SIZE = 1600;
+        double scale = 400; // quanti pixel sono una unita'
+        double speed = 0.05d;
 
-        new Main( setupReal( SIZE, scale ), speed );
-        //new Main( setupComplex( 700, scale ), speed );
+        //System.out.print(Complex.fromPolar(15, 0.64350110));
+
+        //new Main( setupReal( SIZE, scale ), speed );
+        new Main( setupComplex( SIZE, scale ), speed );
         //new Main( setupVector( SIZE, scale ), speed );
     }
 

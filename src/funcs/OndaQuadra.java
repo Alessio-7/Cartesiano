@@ -1,6 +1,6 @@
 package funcs;
 
-public class OndaQuadra extends Function<Double> {
+public class OndaQuadra implements Function<Double> {
 
     Sin[] sins;
     double twopi = 2d * Math.PI;
