@@ -29,13 +29,15 @@ public class Main extends JFrame {
         setVisible( true );
 
         Timer timer = new Timer();
+
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
                 plane.nextFrame( speed );
             }
         };
-        timer.scheduleAtFixedRate( task, 0, 10 );
+        timer.scheduleAtFixedRate( task, 0, 17 );
+
     }
 
     public static Plane setupReal( int SIZE, double scale ) {
@@ -96,15 +98,15 @@ public class Main extends JFrame {
 
     public static void main( String[] args ) {
 
-        int SIZE = 1600;
-        double scale = 400; // quanti pixel sono una unita'
-        double speed = 0.05d;
+        int SIZE = 1000;
+        double scale = 200; // quanti pixel sono una unita'
+        double speed = 0.01d;
 
-        //System.out.print(Complex.fromPolar(15, 0.64350110));
+        //System.out.print( Utils.scale( 0, 500, 1 ) );
 
         //new Main( setupReal( SIZE, scale ), speed );
-        new Main( setupComplex( SIZE, scale ), speed );
-        //new Main( setupVector( SIZE, scale ), speed );
+        //new Main( setupComplex( SIZE, scale ), speed );
+        new Main( setupVector( SIZE, scale ), speed );
     }
 
 }

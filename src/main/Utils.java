@@ -2,7 +2,9 @@ package main;
 
 import java.awt.*;
 
-public class ColorUtils {
+public class Utils {
+
+    private static final double twoOverPi = 2d / Math.PI;
 
     public static int interpolateColor( Color color1, Color color2, double alpha ) {
         double resultRed = color1.getRed() + alpha * (color2.getRed() - color1.getRed());
@@ -62,6 +64,15 @@ public class ColorUtils {
         }
 
         return p;
+    }
+
+
+    public static double scaleAtan( double toScale ) {
+        return (Math.atan( toScale ) * twoOverPi);
+    }
+
+    public static double scaleAtan( double min, double max, double toScale ) {
+        return min + (scaleAtan( toScale ) * (max - min));
     }
 
 }
