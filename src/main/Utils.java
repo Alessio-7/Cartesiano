@@ -6,6 +6,22 @@ public class Utils {
 
     private static final double twoOverPi = 2d / Math.PI;
 
+    public static int lcm( int n1, int n2 ) {
+
+        int gcd = 1;
+
+        for( int i = 1; i <= n1 && i <= n2; ++i ) {
+            if( n1 % i == 0 && n2 % i == 0 )
+                gcd = i;
+        }
+
+        return (n1 * n2) / gcd;
+    }
+
+    public static double lerp( double start, double end, double alpha ) {
+        return start + alpha * (end - start);
+    }
+
     public static int interpolateColor( Color color1, Color color2, double alpha ) {
         double resultRed = color1.getRed() + alpha * (color2.getRed() - color1.getRed());
         double resultGreen = color1.getGreen() + alpha * (color2.getGreen() - color1.getGreen());

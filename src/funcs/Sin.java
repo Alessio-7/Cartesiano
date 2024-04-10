@@ -4,8 +4,8 @@ public class Sin implements Function<Double> {
 
     private final double twopi = 2d * Math.PI;
     private final double freq;
-    private double phase;
     private final double ampl;
+    private double phase;
 
     public Sin( double phase, double freq, double ampl ) {
         this.freq = freq;
@@ -22,7 +22,7 @@ public class Sin implements Function<Double> {
     }
 
     @Override
-    public void update( double t ) {
-        phase = t;
+    public void update( double time ) {
+        phase = time;
     }
 }

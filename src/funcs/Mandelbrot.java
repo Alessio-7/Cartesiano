@@ -25,7 +25,7 @@ public class Mandelbrot implements Function<Complex> {
     }
 
     @Override
-    public void update( double t ) {
+    public void update( double time ) {
 
     }
 }

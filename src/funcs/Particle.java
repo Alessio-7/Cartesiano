@@ -4,10 +4,10 @@ import primitives.Complex;
 
 public class Particle implements Function<Double> {
 
-    Complex z;
     private final double A;
     private final double k;
     private final double w;
+    Complex z;
     private double t;
 
     public Particle( double a, double k, double w ) {
@@ -53,7 +53,7 @@ public class Particle implements Function<Double> {
     }
 
     @Override
-    public void update( double t ) {
-        this.t = t;
+    public void update( double time ) {
+        this.t = time;
     }
 }

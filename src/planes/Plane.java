@@ -1,28 +1,21 @@
 package planes;
 
-import funcs.Function;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
-public abstract class Plane<T> extends JPanel {
+public abstract class Plane extends JPanel {
 
     protected final int SIZE;
     protected final int HALF_SIZE;
-    protected double scale;
     protected final int scaleInt;
-    protected double t = 0;
-    protected ArrayList<Function<T>> funzioni;
+    protected double scale;
+    protected double time = 0;
 
     protected Plane( int SIZE, double scale ) {
         this.SIZE = SIZE;
         this.HALF_SIZE = SIZE / 2;
         this.scale = scale;
         scaleInt = (int) scale;
-
-        funzioni = new ArrayList<>();
-
     }
 
     @Override
@@ -47,33 +40,35 @@ public abstract class Plane<T> extends JPanel {
 
     protected abstract void paintChild( Graphics2D g );
 
-    protected double pixelToCord(int p, int halfSize){
-        return (p-halfSize)/scale;
-    }
-    protected double pixelToCord( int p ) {
-        return pixelToCord(p, HALF_SIZE);
+    protected abstract void updateChilds();
+
+    protected double pixelToCord( int p, int halfSize ) {
+        return (p - halfSize) / scale;
     }
 
-    protected int cordToPixel( double c ) {
-        return (int) ((c * scale) - HALF_SIZE);
+    protected double pixelToCord( int p ) {
+        return pixelToCord( p, HALF_SIZE );
+    }
+
+    protected int cordXToPixel( double c ) {
+        return (int) ((c * scale) + HALF_SIZE);
+    }
+
+    protected int cordYToPixel( double c ) {
+        return (int) -((c * scale) - HALF_SIZE);
     }
 
     public void nextFrame( double speed ) {
-        if( t > Double.MAX_VALUE - 300 ) {
-            t = 0;
+        if( time > Double.MAX_VALUE - 300 ) {
+            time = 0;
         } else {
-            t += speed;
+            time += speed;
         }
-
-        for( Function<T> f : funzioni )
-            f.update( t );
+        updateChilds();
         update();
         repaint();
     }
 
-    public void addFunzione( Function<T> f ) {
-        funzioni.add( f );
-    }
 
     @Override
     public Dimension getPreferredSize() {

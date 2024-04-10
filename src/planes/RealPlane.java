@@ -4,7 +4,7 @@ import funcs.Function;
 
 import java.awt.*;
 
-public class RealPlane extends Plane<Double> {
+public class RealPlane extends FunctionPlane<Double> {
 
     private int[][] ys;
 
@@ -12,15 +12,35 @@ public class RealPlane extends Plane<Double> {
         super( SIZE, scale );
     }
 
+    public static Plane getSample( int SIZE, double scale ) {
+        RealPlane p = new RealPlane( SIZE, scale );
+        //p.addFunzione( new OndaQuadra( 1 ) );
+
+        //p.addFunzione( new Sin( 1d, 1d ) );
+
+        p.addFunzione( new Function<Double>() {
+            @Override
+            public Double f( Double x ) {
+                return Math.exp( x );
+            }
+
+            @Override
+            public void update( double time ) {
+
+            }
+        } );
+        return p;
+    }
+
     @Override
     protected void update() {
-        ys = new int[funzioni.size()][SIZE];
+        ys = new int[functions.size()][SIZE];
 
         for( int x = 0; x < SIZE; x++ ) {
             double x1 = pixelToCord( x );
             int i = 0;
-            for( Function<Double> funz : funzioni ) {
-                int y = -cordToPixel( funz.f( x1 ) );
+            for( Function<Double> funz : functions ) {
+                int y = cordYToPixel( funz.f( x1 ) );
                 ys[i][x] = y;
                 i++;
             }
@@ -48,7 +68,7 @@ public class RealPlane extends Plane<Double> {
 
         g.setStroke( new BasicStroke( 2 ) );
         g.setColor( Color.white );
-        for( int f = 0; f < funzioni.size(); f++ ) {
+        for( int f = 0; f < functions.size(); f++ ) {
             for( int x = 1; x < SIZE; x++ ) {
                 g.drawLine( x - 1, ys[f][x - 1], x, ys[f][x] );
             }

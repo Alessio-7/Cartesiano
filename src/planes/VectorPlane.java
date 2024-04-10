@@ -2,11 +2,12 @@ package planes;
 
 import funcs.Function;
 import main.Utils;
+import primitives.Complex;
 import primitives.Vec2;
 
 import java.awt.*;
 
-public class VectorPlane extends Plane<Vec2> {
+public class VectorPlane extends FunctionPlane<Vec2> {
 
     private final InfoVec[][] vecs;
     private final double space;
@@ -20,12 +21,36 @@ public class VectorPlane extends Plane<Vec2> {
         vecs = new InfoVec[l][l];
     }
 
+    public static VectorPlane getSample( int SIZE, double scale ) {
+
+        VectorPlane p = new VectorPlane( SIZE, scale );
+
+        p.addFunzione( new Function<Vec2>() {
+
+            double x, y;
+
+            @Override
+            public Vec2 f( Vec2 v ) {
+                Complex z = Complex.fromVec2( v );
+                return z.pow( 5 ).sum( new Complex( x, y ) ).toVec2();
+            }
+
+            @Override
+            public void update( double time ) {
+                x = Math.cos( time );
+                y = Math.sin( time );
+            }
+        } );
+
+        return p;
+    }
+
     @Override
     protected void update() {
 
-        if( funzioni.isEmpty() ) return;
+        if( functions.isEmpty() ) return;
 
-        Function<Vec2> f = funzioni.get( 0 );
+        Function<Vec2> f = functions.get( 0 );
 
         Vec2 v;
 
@@ -42,7 +67,6 @@ public class VectorPlane extends Plane<Vec2> {
 
                 double phase = v.phaseRad();
                 double mod = v.mod();
-                //TODO fix
                 double len = Utils.scaleAtan( 0.5, 1, mod );
 
                 vecs[i][j] = new InfoVec(

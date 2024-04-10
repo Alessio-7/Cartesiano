@@ -9,7 +9,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
-public class ComplexPlane extends Plane<Complex> {
+public class ComplexPlane extends FunctionPlane<Complex> {
 
     private final BufferedImage plane;
 
@@ -24,6 +24,28 @@ public class ComplexPlane extends Plane<Complex> {
 
         this.scale /= pixeledScale;
         plane = new BufferedImage( SIZE / pixeledScale, SIZE / pixeledScale, BufferedImage.TYPE_INT_RGB );
+    }
+
+    public static ComplexPlane getSample( int SIZE, double scale ) {
+        ComplexPlane p = new ComplexPlane( SIZE, scale );
+
+        p.addFunzione( new Function<Complex>() {
+
+            double x, y;
+
+            @Override
+            public Complex f( Complex x ) {
+                return x.pow( 2 ).sum( new Complex( this.x, y ) );
+            }
+
+            @Override
+            public void update( double time ) {
+                x = Math.cos( time );
+                y = Math.sin( time );
+            }
+        } );
+
+        return p;
     }
 
     private BufferedImage scalePlane() {
@@ -44,9 +66,9 @@ public class ComplexPlane extends Plane<Complex> {
 
     private void grid() {
 
-        if( funzioni.isEmpty() ) return;
+        if( functions.isEmpty() ) return;
 
-        Function<Complex> f = funzioni.get( 0 );
+        Function<Complex> f = functions.get( 0 );
         Complex z;
 
         for( int x = (SIZE % scaleInt) / 2; x < SIZE; x += scaleInt ) {
@@ -87,9 +109,9 @@ public class ComplexPlane extends Plane<Complex> {
     }
 
     private void color() {
-        if( funzioni.isEmpty() ) return;
+        if( functions.isEmpty() ) return;
 
-        Function<Complex> f = funzioni.get( 0 );
+        Function<Complex> f = functions.get( 0 );
 
         Complex z;
 

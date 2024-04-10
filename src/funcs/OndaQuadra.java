@@ -3,7 +3,7 @@ package funcs;
 public class OndaQuadra implements Function<Double> {
 
     Sin[] sins;
-    double twopi = 2d * Math.PI;
+    // double twopi = 2d * Math.PI;
     double t;
 
 
@@ -28,7 +28,7 @@ public class OndaQuadra implements Function<Double> {
     }
 
     @Override
-    public void update( double t ) {
-        this.t = t;
+    public void update( double time ) {
+        this.t = time;
     }
 }
