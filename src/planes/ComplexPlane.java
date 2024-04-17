@@ -14,8 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 public class ComplexPlane extends FunctionPlane<Complex> {
 
     private final BufferedImage plane;
-    private RenderThread[] threads;
-
 
     public ComplexPlane( int SIZE, double scale ) {
         super( SIZE, scale );
@@ -23,13 +21,8 @@ public class ComplexPlane extends FunctionPlane<Complex> {
 
         if( SIZE > 99 ) pixeledScale = (int) (0.005667d * SIZE + 1.533d);
 
-        pixeledScale = 16;
-
-        //this.scale /= pixeledScale;
-        //plane = new BufferedImage( SIZE / pixeledScale, SIZE / pixeledScale, BufferedImage.TYPE_INT_RGB );
-        plane = new BufferedImage( SIZE, SIZE, BufferedImage.TYPE_INT_RGB );
-
-        setupThreads( pixeledScale );
+        this.scale /= pixeledScale;
+        plane = new BufferedImage( SIZE / pixeledScale, SIZE / pixeledScale, BufferedImage.TYPE_INT_RGB );
     }
 
     public static ComplexPlane getSample( int SIZE, double scale ) {
@@ -69,35 +62,6 @@ public class ComplexPlane extends FunctionPlane<Complex> {
         return after;
     }
 
-    private void setupThreads( int nThreads ) {
-        threads = new RenderThread[nThreads];
-
-        int nRows = (int) Math.ceil( Math.sqrt( nThreads ) );
-        int nCols = nThreads / nRows;
-
-        int regionLenX = plane.getWidth() / nRows;
-        int regionLenY = plane.getHeight() / nCols;
-
-        //System.out.println( nRows + " " + nCols );
-
-        int x = 0, y = 0;
-        for( int i = 0; i < threads.length; i++ ) {
-
-            if( x == nCols ) {
-                x = 0;
-                y++;
-            }
-
-            int regionX = x * regionLenX;
-            int regionY = y * regionLenY;
-
-
-            //System.out.print( x + ", " + y + " : " );
-            threads[i] = new RenderThread( regionX, regionY, regionX + regionLenX, regionY + regionLenY );
-            x++;
-        }
-    }
-
     private void color() {
 
         Function<Complex> f = getFirstFunction();
@@ -120,54 +84,11 @@ public class ComplexPlane extends FunctionPlane<Complex> {
 
     @Override
     protected void update() {
-        //color();
-
-        for( RenderThread t : threads ) {
-            t.startNew();
-        }
-
+        color();
     }
 
     @Override
     protected void paintChild( Graphics2D g ) {
-        //g.drawImage( scalePlane(), 0, 0, null );
-        g.drawImage( plane, 0, 0, null );
-    }
-
-
-    private class RenderThread {
-
-        private final Runnable t;
-
-        public RenderThread( int startRegionX, int startRegionY, int endRegionX, int endRegionY ) {
-
-            //System.out.println( startRegionX + " - " + endRegionX + " ; " + startRegionY + " - " + endRegionY );
-            t = () -> {
-
-                Function<Complex> f = getFirstFunction();
-                Complex z;
-
-                for( int x = startRegionX; x < endRegionX; x++ ) {
-                    for( int y = startRegionY; y < endRegionY; y++ ) {
-
-                        double a = pixelToCord( x, plane.getWidth() / 2 );
-                        double b = -pixelToCord( y, plane.getHeight() / 2 );
-
-                        z = f.f( new Complex( a, b ) );
-
-                        plane.setRGB( x, y, Utils.hslToRgb( (float) z.phaseDeg(), 1f, (float) Utils.scaleAtan( z.mod() ) ) );
-
-                    }
-                }
-            };
-        }
-
-        public void startNew() {
-            try {
-                SwingUtilities.invokeAndWait( t );
-            } catch( InterruptedException | InvocationTargetException e ) {
-                e.printStackTrace();
-            }
-        }
+        g.drawImage( scalePlane(), 0, 0, null );
     }
 }

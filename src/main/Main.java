@@ -1,7 +1,7 @@
 package main;
 
 import planes.ComplexPlane;
-import planes.Plane;
+import planes.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,21 +30,21 @@ public class Main extends JFrame {
                 plane.nextFrame( speed );
             }
         };
-        timer.scheduleAtFixedRate( task, 0, 17 );
+        //timer.scheduleAtFixedRate( task, 0, 17 );
 
-        //plane.nextFrame( 0 );
+        plane.nextFrame( 0 );
 
     }
 
 
     public static void main( String[] args ) {
 
-        int SIZE = 1000;
+        int SIZE = 1600;
         double scale = 200; // quanti pixel sono una unita'
         double speed = 0.01d;
 
-        //new Main( RealPlane.getSample( SIZE, scale ), speed );
-        new Main( ComplexPlane.getSample( SIZE, scale ), speed );
+        new Main( RealPlane.getSample( SIZE, scale ), speed );
+        //new Main( ComplexPlane.getSample( SIZE, scale ), speed );
         //new Main( VectorPlane.getSample( SIZE, scale ), speed );
         //new Main( ParametricPlane.getSample( SIZE, scale ), speed );
     }

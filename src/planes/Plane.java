@@ -2,6 +2,7 @@ package planes;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 
 public abstract class Plane extends JPanel {
 
@@ -11,7 +12,7 @@ public abstract class Plane extends JPanel {
     protected double scale;
     protected double time = 0;
 
-    protected Plane( int SIZE, double scale ) {
+    protected Plane(int SIZE, double scale) {
         this.SIZE = SIZE;
         this.HALF_SIZE = SIZE / 2;
         this.scale = scale;
@@ -19,47 +20,47 @@ public abstract class Plane extends JPanel {
     }
 
     @Override
-    public void paint( Graphics gr ) {
-        super.paint( gr );
+    public void paint(Graphics gr) {
+        super.paint(gr);
 
         Graphics2D g = (Graphics2D) gr;
 
-        g.setRenderingHint( RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY );
-        g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-        g.setRenderingHint( RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY );
-        g.setRenderingHint( RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE );
-        g.setRenderingHint( RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON );
-        g.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
-        g.setRenderingHint( RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY );
-        g.setRenderingHint( RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE );
+        g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
-        paintChild( g );
+        paintChild(g);
     }
 
     protected abstract void update();
 
-    protected abstract void paintChild( Graphics2D g );
+    protected abstract void paintChild(Graphics2D g);
 
     protected abstract void updateChilds();
 
-    protected double pixelToCord( int p, int halfSize ) {
+    protected double pixelToCord(int p, int halfSize) {
         return (p - halfSize) / scale;
     }
 
-    protected double pixelToCord( int p ) {
-        return pixelToCord( p, HALF_SIZE );
+    protected double pixelToCord(int p) {
+        return pixelToCord(p, HALF_SIZE);
     }
 
-    protected int cordXToPixel( double c ) {
+    protected int cordXToPixel(double c) {
         return (int) ((c * scale) + HALF_SIZE);
     }
 
-    protected int cordYToPixel( double c ) {
+    protected int cordYToPixel(double c) {
         return (int) -((c * scale) - HALF_SIZE);
     }
 
-    public void nextFrame( double speed ) {
-        if( time > Double.MAX_VALUE - 300 ) {
+    public void nextFrame(double speed) {
+        if (time > Double.MAX_VALUE - 300) {
             time = 0;
         } else {
             time += speed;
@@ -72,6 +73,6 @@ public abstract class Plane extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension( SIZE, SIZE );
+        return new Dimension(SIZE, SIZE);
     }
 }
