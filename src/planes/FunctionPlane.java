@@ -19,6 +19,10 @@ public abstract class FunctionPlane<T> extends Plane {
             f.update( time );
     }
 
+    protected Function<T> getFirstFunction() {
+        return functions.get( 0 );
+    }
+
     public void addFunzione( Function<T> f ) {
         functions.add( f );
     }

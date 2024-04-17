@@ -1,6 +1,6 @@
 package main;
 
-import planes.ParametricPlane;
+import planes.ComplexPlane;
 import planes.Plane;
 
 import javax.swing.*;
@@ -22,9 +22,6 @@ public class Main extends JFrame {
         setLocation( Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getWidth() / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - getHeight() / 2 );
         setVisible( true );
 
-        //plane.nextFrame( 0 );
-
-
         Timer timer = new Timer();
 
         TimerTask task = new TimerTask() {
@@ -34,6 +31,8 @@ public class Main extends JFrame {
             }
         };
         timer.scheduleAtFixedRate( task, 0, 17 );
+
+        //plane.nextFrame( 0 );
 
     }
 
@@ -45,8 +44,9 @@ public class Main extends JFrame {
         double speed = 0.01d;
 
         //new Main( RealPlane.getSample( SIZE, scale ), speed );
-        //new Main( ComplexPlane.getSample( SIZE, scale ), speed );
-        new Main( ParametricPlane.getSample( SIZE, scale ), speed );
+        new Main( ComplexPlane.getSample( SIZE, scale ), speed );
+        //new Main( VectorPlane.getSample( SIZE, scale ), speed );
+        //new Main( ParametricPlane.getSample( SIZE, scale ), speed );
     }
 
 }

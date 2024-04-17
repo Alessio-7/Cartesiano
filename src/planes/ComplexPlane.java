@@ -4,26 +4,32 @@ import funcs.Function;
 import main.Utils;
 import primitives.Complex;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 
 public class ComplexPlane extends FunctionPlane<Complex> {
 
     private final BufferedImage plane;
+    private RenderThread[] threads;
 
 
     public ComplexPlane( int SIZE, double scale ) {
         super( SIZE, scale );
         int pixeledScale = 1;
 
-        if( SIZE > 99 )
-            pixeledScale = (int) (0.005667d * SIZE + 1.533d);
+        if( SIZE > 99 ) pixeledScale = (int) (0.005667d * SIZE + 1.533d);
 
+        pixeledScale = 16;
 
-        this.scale /= pixeledScale;
-        plane = new BufferedImage( SIZE / pixeledScale, SIZE / pixeledScale, BufferedImage.TYPE_INT_RGB );
+        //this.scale /= pixeledScale;
+        //plane = new BufferedImage( SIZE / pixeledScale, SIZE / pixeledScale, BufferedImage.TYPE_INT_RGB );
+        plane = new BufferedImage( SIZE, SIZE, BufferedImage.TYPE_INT_RGB );
+
+        setupThreads( pixeledScale );
     }
 
     public static ComplexPlane getSample( int SIZE, double scale ) {
@@ -57,61 +63,44 @@ public class ComplexPlane extends FunctionPlane<Complex> {
         int h2 = (int) (h * scaleP);
         BufferedImage after = new BufferedImage( w2, h2, BufferedImage.TYPE_INT_ARGB );
         AffineTransform scaleInstance = AffineTransform.getScaleInstance( scaleP, scaleP );
-        AffineTransformOp scaleOp
-                = new AffineTransformOp( scaleInstance, AffineTransformOp.TYPE_BILINEAR );
+        AffineTransformOp scaleOp = new AffineTransformOp( scaleInstance, AffineTransformOp.TYPE_BILINEAR );
 
         scaleOp.filter( plane, after );
         return after;
     }
 
-    private void grid() {
+    private void setupThreads( int nThreads ) {
+        threads = new RenderThread[nThreads];
 
-        if( functions.isEmpty() ) return;
+        int nRows = (int) Math.ceil( Math.sqrt( nThreads ) );
+        int nCols = nThreads / nRows;
 
-        Function<Complex> f = functions.get( 0 );
-        Complex z;
+        int regionLenX = plane.getWidth() / nRows;
+        int regionLenY = plane.getHeight() / nCols;
 
-        for( int x = (SIZE % scaleInt) / 2; x < SIZE; x += scaleInt ) {
-            for( int y = 0; y < SIZE; y++ ) {
+        //System.out.println( nRows + " " + nCols );
 
-                double a = (x - HALF_SIZE) / scale;
-                double b = (y - HALF_SIZE) / scale;
+        int x = 0, y = 0;
+        for( int i = 0; i < threads.length; i++ ) {
 
-                z = f.f( new Complex( a, b ) );
-
-                int x1 = (int) -((z.a * scale) - HALF_SIZE);
-                int y1 = (int) -((z.b * scale) - HALF_SIZE);
-
-                if( x1 < SIZE && x1 > 0 && y1 < SIZE && y1 > 0 ) {
-                    plane.setRGB( x1, y1, (a == 0 ? Color.cyan : Color.gray).getRGB() );
-                }
+            if( x == nCols ) {
+                x = 0;
+                y++;
             }
+
+            int regionX = x * regionLenX;
+            int regionY = y * regionLenY;
+
+
+            //System.out.print( x + ", " + y + " : " );
+            threads[i] = new RenderThread( regionX, regionY, regionX + regionLenX, regionY + regionLenY );
+            x++;
         }
-
-        for( int y = (SIZE % scaleInt) / 2; y < SIZE; y += scaleInt ) {
-            for( int x = 0; x < SIZE; x++ ) {
-
-                double a = (x - HALF_SIZE) / scale;
-                double b = (y - HALF_SIZE) / scale;
-
-                z = f.f( new Complex( a, b ) );
-
-                int x1 = (int) -((z.a * scale) - HALF_SIZE);
-                int y1 = (int) -((z.b * scale) - HALF_SIZE);
-
-                if( x1 < SIZE && x1 > 0 && y1 < SIZE && y1 > 0 ) {
-                    plane.setRGB( x1, y1, (b == 0 ? Color.cyan : Color.gray).getRGB() );
-                }
-            }
-        }
-
-
     }
 
     private void color() {
-        if( functions.isEmpty() ) return;
 
-        Function<Complex> f = functions.get( 0 );
+        Function<Complex> f = getFirstFunction();
 
         Complex z;
 
@@ -123,12 +112,7 @@ public class ComplexPlane extends FunctionPlane<Complex> {
 
                 z = f.f( new Complex( a, b ) );
 
-                plane.setRGB( x, y,
-                        Utils.hslToRgb(
-                                (float) z.phaseDeg(),
-                                1f,
-                                (float) Utils.scaleAtan( z.mod() ) )
-                );
+                plane.setRGB( x, y, Utils.hslToRgb( (float) z.phaseDeg(), 1f, (float) Utils.scaleAtan( z.mod() ) ) );
 
             }
         }
@@ -136,11 +120,54 @@ public class ComplexPlane extends FunctionPlane<Complex> {
 
     @Override
     protected void update() {
-        color();
+        //color();
+
+        for( RenderThread t : threads ) {
+            t.startNew();
+        }
+
     }
 
     @Override
     protected void paintChild( Graphics2D g ) {
-        g.drawImage( scalePlane(), 0, 0, null );
+        //g.drawImage( scalePlane(), 0, 0, null );
+        g.drawImage( plane, 0, 0, null );
+    }
+
+
+    private class RenderThread {
+
+        private final Runnable t;
+
+        public RenderThread( int startRegionX, int startRegionY, int endRegionX, int endRegionY ) {
+
+            //System.out.println( startRegionX + " - " + endRegionX + " ; " + startRegionY + " - " + endRegionY );
+            t = () -> {
+
+                Function<Complex> f = getFirstFunction();
+                Complex z;
+
+                for( int x = startRegionX; x < endRegionX; x++ ) {
+                    for( int y = startRegionY; y < endRegionY; y++ ) {
+
+                        double a = pixelToCord( x, plane.getWidth() / 2 );
+                        double b = -pixelToCord( y, plane.getHeight() / 2 );
+
+                        z = f.f( new Complex( a, b ) );
+
+                        plane.setRGB( x, y, Utils.hslToRgb( (float) z.phaseDeg(), 1f, (float) Utils.scaleAtan( z.mod() ) ) );
+
+                    }
+                }
+            };
+        }
+
+        public void startNew() {
+            try {
+                SwingUtilities.invokeAndWait( t );
+            } catch( InterruptedException | InvocationTargetException e ) {
+                e.printStackTrace();
+            }
+        }
     }
 }

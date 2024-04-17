@@ -101,7 +101,6 @@ public class ParametricPlane extends Plane {
 
         g.setColor( Color.gray );
         g.drawLine( cordXToPixel( parametric.getCenter().x ), cordYToPixel( parametric.getCenter().y ), cordXToPixel( parametric.getX( t ) ), cordYToPixel( parametric.getY( t ) ) );
-
     }
 
     @Override
