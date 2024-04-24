@@ -81,16 +81,20 @@ public class RealPlane extends FunctionPlane<Double> {
 
         g.setStroke( new BasicStroke( 1 ) );
 
-        g.setColor( Color.gray );
-        g.drawLine( 0, HALF_SIZE, SIZE, HALF_SIZE );
+        g.setColor( Color.darkGray.darker().darker() );
         for( int x = (SIZE % scaleInt) / 2; x < SIZE; x += scaleInt ) {
-            g.drawLine( x, HALF_SIZE - 3, x, HALF_SIZE + 3 );
+            //g.drawLine( x, HALF_SIZE - 3, x, HALF_SIZE + 3 );
+            g.drawLine( x, 0, x, SIZE );
         }
 
-        g.drawLine( HALF_SIZE, 0, HALF_SIZE, SIZE );
         for( int y = (SIZE % scaleInt) / 2; y < SIZE; y += scaleInt ) {
-            g.drawLine( HALF_SIZE - 3, y, HALF_SIZE + 3, y );
+            //g.drawLine( HALF_SIZE - 3, y, HALF_SIZE + 3, y );
+            g.drawLine( 0, y, SIZE, y );
         }
+
+        g.setColor( Color.gray );
+        g.drawLine( 0, HALF_SIZE, SIZE, HALF_SIZE );
+        g.drawLine( HALF_SIZE, 0, HALF_SIZE, SIZE );
 
         g.setStroke( new BasicStroke( 2 ) );
         g.setColor( Color.white );

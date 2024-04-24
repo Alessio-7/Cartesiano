@@ -1,9 +1,9 @@
 package main;
 
 import funcs.Function;
-import parametrics.Ellipse;
+import planes.ComplexPlane;
 import planes.Plane;
-import planes.RealPlane;
+import primitives.Complex;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,8 +60,8 @@ public class Main extends JFrame {
         double scale = 100; // quanti pixel sono una unita'
         double speed = 0.01d;
 
+        /*
         RealPlane plane = new RealPlane( SIZE, scale );
-
         panel.addParameter( "a", 3d );
         panel.addParameter( "b", 2d );
         panel.addParameter( "m", 1d );
@@ -85,6 +85,21 @@ public class Main extends JFrame {
             public void update( double time ) {
                 setA( panel.getParameter( "a" ) );
                 setB( panel.getParameter( "b" ) );
+            }
+        } );
+        */
+
+        panel.addParameter( "p", 2d );
+        ComplexPlane plane = new ComplexPlane( SIZE, scale );
+        plane.addFunction( new Function<Complex>() {
+            @Override
+            public Complex f( Complex x ) {
+                return x.pow( panel.getParameter( "p" ) ).sum( new Complex( 1, 1 ) );
+            }
+
+            @Override
+            public void update( double time ) {
+
             }
         } );
 

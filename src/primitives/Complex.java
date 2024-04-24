@@ -30,7 +30,7 @@ public class Complex {
         return new Complex( v.a, v.b );
     }
 
-    public Complex pow( int p ) {
+    public Complex pow( double p ) {
         return Complex.fromPolar( Math.pow( mod(), p ), phaseRad() * p );
     }
 

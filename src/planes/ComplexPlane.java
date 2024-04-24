@@ -12,15 +12,21 @@ import java.awt.image.BufferedImage;
 public class ComplexPlane extends FunctionPlane<Complex> {
 
     private final BufferedImage plane;
+    private final boolean efficient;
 
-    public ComplexPlane( int SIZE, double scale ) {
+    public ComplexPlane( int SIZE, double scale, boolean efficient ) {
         super( SIZE, scale );
+        this.efficient = efficient;
         int pixeledScale = 1;
 
-        if( SIZE > 99 ) pixeledScale = (int) (0.005667d * SIZE + 1.533d);
+        if( efficient && SIZE > 99 ) pixeledScale = (int) (0.005667d * SIZE + 1.533d);
 
         this.scale /= pixeledScale;
         plane = new BufferedImage( SIZE / pixeledScale, SIZE / pixeledScale, BufferedImage.TYPE_INT_RGB );
+    }
+
+    public ComplexPlane( int SIZE, double scale ) {
+        this( SIZE, scale, true );
     }
 
     public static ComplexPlane getSample( int SIZE, double scale ) {
@@ -46,6 +52,9 @@ public class ComplexPlane extends FunctionPlane<Complex> {
     }
 
     private BufferedImage scalePlane() {
+        if( !efficient )
+            return plane;
+
         int w = plane.getWidth();
         int h = plane.getHeight();
 
