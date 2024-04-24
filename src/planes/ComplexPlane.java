@@ -4,12 +4,10 @@ import funcs.Function;
 import main.Utils;
 import primitives.Complex;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.InvocationTargetException;
 
 public class ComplexPlane extends FunctionPlane<Complex> {
 

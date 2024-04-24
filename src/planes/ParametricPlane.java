@@ -27,12 +27,12 @@ public class ParametricPlane extends Plane {
         p.setParametric( new Parametric() {
             @Override
             public double getX( double t ) {
-                return Math.pow( Math.cos( t ), 3 );
+                return 2 * Math.pow( Math.cos( t ), 3 );
             }
 
             @Override
             public double getY( double t ) {
-                return Math.pow( Math.sin( t ), 3 );
+                return 2 * Math.pow( Math.sin( t ), 3 );
             }
 
             @Override
@@ -55,7 +55,6 @@ public class ParametricPlane extends Plane {
 
             }
         } );
-
         return p;
 
     }

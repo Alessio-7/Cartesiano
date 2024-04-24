@@ -15,7 +15,8 @@ public class VectorPlane extends FunctionPlane<Vec2> {
     public VectorPlane( int SIZE, double scale ) {
         super( SIZE, scale );
 
-        space = scale / 10;
+        //space = scale / 2;
+        space = 25;
 
         int l = (int) ((SIZE / space) + 1);
         vecs = new InfoVec[l][l];
@@ -32,7 +33,7 @@ public class VectorPlane extends FunctionPlane<Vec2> {
             @Override
             public Vec2 f( Vec2 v ) {
                 Complex z = Complex.fromVec2( v );
-                return z.pow( 5 ).sum( new Complex( x, y ) ).toVec2();
+                return z.pow( 2 ).sum( new Complex( x, y ) ).toVec2();
             }
 
             @Override
@@ -48,9 +49,7 @@ public class VectorPlane extends FunctionPlane<Vec2> {
     @Override
     protected void update() {
 
-        if( functions.isEmpty() ) return;
-
-        Function<Vec2> f = functions.get( 0 );
+        Function<Vec2> f = getFirstFunction();
 
         Vec2 v;
 
@@ -73,6 +72,7 @@ public class VectorPlane extends FunctionPlane<Vec2> {
                         (int) (x + Math.cos( phase ) * (space - 5) * len),
                         (int) (y + Math.sin( phase ) * (space - 5) * len),
                         new Color( Utils.interpolateColor( Color.blue, Color.yellow, Utils.scaleAtan( mod ) ) ).getRGB()
+                        //new Color( Utils.interpolateColor( Color.blue, Color.red, Utils.scaleAtan( mod ) ) ).getRGB()
                 );
                 j++;
             }
@@ -87,7 +87,7 @@ public class VectorPlane extends FunctionPlane<Vec2> {
         int strokeSize = (int) ((BasicStroke) g.getStroke()).getLineWidth() + 2;
         int vecHeadSize = (int) (strokeSize * 1.9);
 
-        g.setColor( Color.black );
+        g.setColor( Color.white );
         g.setStroke( new BasicStroke( strokeSize ) );
         g.fillRect( 0, 0, SIZE, SIZE );
 
