@@ -26,7 +26,7 @@ public class VectorPlane extends FunctionPlane<Vec2> {
 
         VectorPlane p = new VectorPlane( SIZE, scale );
 
-        p.addFunzione( new Function<Vec2>() {
+        p.addFunction( new Function<Vec2>() {
 
             double x, y;
 

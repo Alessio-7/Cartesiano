@@ -23,7 +23,7 @@ public abstract class FunctionPlane<T> extends Plane {
         return functions.get( 0 );
     }
 
-    public void addFunzione( Function<T> f ) {
+    public void addFunction( Function<T> f ) {
         functions.add( f );
     }
 }

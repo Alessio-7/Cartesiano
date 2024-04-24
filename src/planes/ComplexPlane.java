@@ -26,7 +26,7 @@ public class ComplexPlane extends FunctionPlane<Complex> {
     public static ComplexPlane getSample( int SIZE, double scale ) {
         ComplexPlane p = new ComplexPlane( SIZE, scale );
 
-        p.addFunzione( new Function<Complex>() {
+        p.addFunction( new Function<Complex>() {
 
             double x, y;
 

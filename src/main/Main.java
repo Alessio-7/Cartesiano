@@ -1,6 +1,9 @@
 package main;
 
-import planes.*;
+import funcs.Function;
+import parametrics.Ellipse;
+import planes.Plane;
+import planes.RealPlane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +14,7 @@ public class Main extends JFrame {
 
     static int posX;
     static int posY;
+    static ParametersPanel panel;
 
     public Main( Plane plane, double speed ) {
         super();
@@ -22,7 +26,8 @@ public class Main extends JFrame {
         add( plane );
         pack();
 
-        int space = Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getWidth();
+        //int space = Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getWidth();
+        int space = Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getWidth() / 2;
 
         if( posX == 2 ) {
             posX = 0;
@@ -48,14 +53,50 @@ public class Main extends JFrame {
 
     public static void main( String[] args ) {
 
-        int SIZE = 500;
+        panel = new ParametersPanel();
+
+
+        int SIZE = 1000;
         double scale = 100; // quanti pixel sono una unita'
         double speed = 0.01d;
 
-        new Main( RealPlane.getSample( SIZE, scale ), speed );
-        new Main( ParametricPlane.getSample( SIZE, scale ), speed );
-        new Main( ComplexPlane.getSample( SIZE, scale ), speed );
-        new Main( VectorPlane.getSample( SIZE, scale ), speed );
+        RealPlane plane = new RealPlane( SIZE, scale );
+
+        panel.addParameter( "a", 3d );
+        panel.addParameter( "b", 2d );
+        panel.addParameter( "m", 1d );
+        plane.addFunction( new Function<Double>() {
+            double m, q;
+
+            @Override
+            public Double f( Double x ) {
+                return m * x + q;
+            }
+
+            @Override
+            public void update( double time ) {
+                m = panel.getParameter( "m" );
+                double a = panel.getParameter( "a" ), b = panel.getParameter( "b" );
+                q = Math.sqrt( (a * a * m * m) + (b * b) );
+            }
+        } );
+        plane.addParametric( new Ellipse( 2, 3 ) {
+            @Override
+            public void update( double time ) {
+                setA( panel.getParameter( "a" ) );
+                setB( panel.getParameter( "b" ) );
+            }
+        } );
+
+
+        new Main( plane, speed );
+
+        //new Main( RealPlane.getSample( SIZE, scale ), speed );
+        //new Main( ParametricPlane.getSample( SIZE, scale ), speed );
+        //new Main( ComplexPlane.getSample( SIZE, scale ), speed );
+        //new Main( VectorPlane.getSample( SIZE, scale ), speed );
+
+        panel.setVisible( true );
     }
 
 }

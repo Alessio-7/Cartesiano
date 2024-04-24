@@ -1,23 +1,32 @@
 package planes;
 
 import funcs.Function;
+import main.Utils;
+import parametrics.Ellipse;
+import parametrics.Parametric;
 import study.Study;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class RealPlane extends FunctionPlane<Double> {
 
+    private final int iterations;
+    protected ArrayList<Parametric> parametrics;
     private int[][] ys;
+    private int[][][] points;
 
     public RealPlane( int SIZE, double scale ) {
         super( SIZE, scale );
+        parametrics = new ArrayList<>();
+        iterations = 200;
     }
 
     public static Plane getSample( int SIZE, double scale ) {
         RealPlane p = new RealPlane( SIZE, scale );
 
-        //p.addFunzione( new OndaQuadra( 1 ) );
-        //p.addFunzione( new Sin( 1d, 1d ) );
+        //p.addFunction( new OndaQuadra( 1 ) );
+        //p.addFunction( new Sin( 1d, 1d ) );
 
         Study s = new Study( p, new Function<Double>() {
             @Override
@@ -31,7 +40,8 @@ public class RealPlane extends FunctionPlane<Double> {
             }
         } );
 
-        p.addFunzione( s.integrate() );
+        p.addFunction( s.integrate() );
+        p.addParametric( new Ellipse( 4, 2 ) );
 
         return p;
     }
@@ -46,6 +56,19 @@ public class RealPlane extends FunctionPlane<Double> {
             for( Function<Double> funz : functions ) {
                 int y = cordYToPixel( funz.f( x1 ) );
                 ys[i][x] = y;
+                i++;
+            }
+        }
+
+        points = new int[parametrics.size()][iterations + 1][2];
+
+        double t;
+        for( int tIter = 0; tIter <= iterations; tIter++ ) {
+            int i = 0;
+            for( Parametric parametric : parametrics ) {
+                t = Utils.lerp( parametric.getStart(), parametric.getEnd(), (double) tIter / iterations );
+                points[i][tIter][0] = cordXToPixel( parametric.getX( t ) );
+                points[i][tIter][1] = cordYToPixel( parametric.getY( t ) );
                 i++;
             }
         }
@@ -69,7 +92,6 @@ public class RealPlane extends FunctionPlane<Double> {
             g.drawLine( HALF_SIZE - 3, y, HALF_SIZE + 3, y );
         }
 
-
         g.setStroke( new BasicStroke( 2 ) );
         g.setColor( Color.white );
         for( int f = 0; f < functions.size(); f++ ) {
@@ -83,5 +105,22 @@ public class RealPlane extends FunctionPlane<Double> {
                 g.drawLine( x - 1, y1, x, y2 );
             }
         }
+
+        for( int p = 0; p < parametrics.size(); p++ ) {
+            for( int i = 1; i < points[p].length; i++ ) {
+                g.drawLine( points[p][i - 1][0], points[p][i - 1][1], points[p][i][0], points[p][i][1] );
+            }
+        }
+    }
+
+    public void addParametric( Parametric p ) {
+        parametrics.add( p );
+    }
+
+    @Override
+    protected void updateChilds() {
+        super.updateChilds();
+        for( Parametric p : parametrics )
+            p.update( time );
     }
 }

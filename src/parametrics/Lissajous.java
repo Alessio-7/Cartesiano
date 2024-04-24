@@ -4,7 +4,12 @@ import primitives.Point;
 
 public class Lissajous implements Parametric {
 
-    private final double alpha, beta, a, b, kx, ky;
+    private final double alpha;
+    private final double beta;
+    private double a;
+    private double b;
+    private final double kx;
+    private final double ky;
 
     public Lissajous( double kx, double ky ) {
         this( 1, 1, kx, ky );
@@ -51,5 +56,13 @@ public class Lissajous implements Parametric {
     @Override
     public void update( double time ) {
 
+    }
+
+    public void setA( double a ) {
+        this.a = a;
+    }
+
+    public void setB( double b ) {
+        this.b = b;
     }
 }
