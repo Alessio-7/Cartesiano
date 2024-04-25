@@ -4,6 +4,8 @@ import funcs.Function;
 import main.Utils;
 import parametrics.Ellipse;
 import parametrics.Parametric;
+import polygons.Polygon;
+import primitives.Point;
 import study.Study;
 
 import java.awt.*;
@@ -13,11 +15,13 @@ public class RealPlane extends FunctionPlane<Double> {
 
     private final int iterations;
     protected ArrayList<Parametric> parametrics;
+    protected ArrayList<Polygon> polygons;
     private int[][] ys;
-    private int[][][] points;
+    private int[][][] pametricsPoints;
 
     public RealPlane( int SIZE, double scale ) {
         super( SIZE, scale );
+        polygons = new ArrayList<>();
         parametrics = new ArrayList<>();
         iterations = 200;
     }
@@ -60,15 +64,15 @@ public class RealPlane extends FunctionPlane<Double> {
             }
         }
 
-        points = new int[parametrics.size()][iterations + 1][2];
+        pametricsPoints = new int[parametrics.size()][iterations + 1][2];
 
         double t;
         for( int tIter = 0; tIter <= iterations; tIter++ ) {
             int i = 0;
             for( Parametric parametric : parametrics ) {
                 t = Utils.lerp( parametric.getStart(), parametric.getEnd(), (double) tIter / iterations );
-                points[i][tIter][0] = cordXToPixel( parametric.getX( t ) );
-                points[i][tIter][1] = cordYToPixel( parametric.getY( t ) );
+                pametricsPoints[i][tIter][0] = cordXToPixel( parametric.getX( t ) );
+                pametricsPoints[i][tIter][1] = cordYToPixel( parametric.getY( t ) );
                 i++;
             }
         }
@@ -111,8 +115,33 @@ public class RealPlane extends FunctionPlane<Double> {
         }
 
         for( int p = 0; p < parametrics.size(); p++ ) {
-            for( int i = 1; i < points[p].length; i++ ) {
-                g.drawLine( points[p][i - 1][0], points[p][i - 1][1], points[p][i][0], points[p][i][1] );
+            for( int i = 1; i < pametricsPoints[p].length; i++ ) {
+                g.drawLine( pametricsPoints[p][i - 1][0], pametricsPoints[p][i - 1][1], pametricsPoints[p][i][0], pametricsPoints[p][i][1] );
+            }
+        }
+
+        g.setColor( Color.cyan );
+
+        for( Polygon polygon : polygons ) {
+
+            Point[] points = polygon.getPoints();
+
+            for( int i = 1; i < points.length; i++ ) {
+                g.drawLine(
+                        cordXToPixel( points[i - 1].x ),
+                        cordYToPixel( points[i - 1].y ),
+                        cordXToPixel( points[i].x ),
+                        cordYToPixel( points[i].y )
+                );
+            }
+
+            if( !polygon.isOpen() ) {
+                g.drawLine(
+                        cordXToPixel( points[0].x ),
+                        cordYToPixel( points[0].y ),
+                        cordXToPixel( points[points.length - 1].x ),
+                        cordYToPixel( points[points.length - 1].y )
+                );
             }
         }
     }
@@ -121,10 +150,16 @@ public class RealPlane extends FunctionPlane<Double> {
         parametrics.add( p );
     }
 
+    public void addPolygon( Polygon p ) {
+        polygons.add( p );
+    }
+
     @Override
     protected void updateChilds() {
         super.updateChilds();
         for( Parametric p : parametrics )
+            p.update( time );
+        for( Polygon p : polygons )
             p.update( time );
     }
 }

@@ -4,12 +4,12 @@ import primitives.Point;
 
 public class Lissajous implements Parametric {
 
-    private final double alpha;
-    private final double beta;
+    private double alpha;
+    private double beta;
     private double a;
     private double b;
-    private final double kx;
-    private final double ky;
+    private double kx;
+    private double ky;
 
     public Lissajous( double kx, double ky ) {
         this( 1, 1, kx, ky );
@@ -58,11 +58,51 @@ public class Lissajous implements Parametric {
 
     }
 
+    public double getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha( double alpha ) {
+        this.alpha = alpha;
+    }
+
+    public double getBeta() {
+        return beta;
+    }
+
+    public void setBeta( double beta ) {
+        this.beta = beta;
+    }
+
+    public double getA() {
+        return a;
+    }
+
     public void setA( double a ) {
         this.a = a;
     }
 
+    public double getB() {
+        return b;
+    }
+
     public void setB( double b ) {
         this.b = b;
+    }
+
+    public double getKx() {
+        return kx;
+    }
+
+    public void setKx( double kx ) {
+        this.kx = kx;
+    }
+
+    public double getKy() {
+        return ky;
+    }
+
+    public void setKy( double ky ) {
+        this.ky = ky;
     }
 }
