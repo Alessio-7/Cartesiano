@@ -7,4 +7,21 @@ public class Point {
         this.x = x;
         this.y = y;
     }
+
+    public Point negativeX() {
+        return new Point( -x, y );
+    }
+
+    public Point negativeY() {
+        return new Point( x, -y );
+    }
+
+    public Point negative() {
+        return new Point( -x, -y );
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + "; " + y + ')';
+    }
 }

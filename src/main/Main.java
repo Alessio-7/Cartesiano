@@ -65,6 +65,18 @@ public class Main extends JFrame {
         panel.addParameter( "b", 2d );
 
         Ellipse e = new Ellipse( 2, 3 ) {
+            /*@Override
+            public double getX( double t ) {
+                return 0;
+            }
+
+            @Override
+            public double getY( double t ) {
+                return 0;
+            }
+
+             */
+
             @Override
             public void update( double time ) {
                 setA( panel.getParameter( "a" ) );
@@ -73,8 +85,7 @@ public class Main extends JFrame {
         };
 
         plane.addParametric( e );
-        plane.addPolygon( new EllipseInscribed( e ) );
-
+        plane.addPolygon( new EllipseInscribed( e, 4 ) );
 
         new Main( plane, speed );
 
