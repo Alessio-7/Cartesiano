@@ -5,80 +5,87 @@ import planes.RealPlane;
 
 public class Study {
 
-    private final Function<Double> f;
-    private final RealPlane p;
-    private final double h = 0.0000001d;
+	private final Function<Double> f;
+	private final RealPlane p;
+	private final double h = 0.0000001d;
 
-    public Study( RealPlane p, Function<Double> f ) {
-        this.p = p;
-        this.f = f;
-    }
+	public Study(Function<Double> f) {
+		this.p = null;
+		this.f = f;
+	}
 
-    public Function<Double> getF() {
-        return f;
-    }
+	public Study(RealPlane p, Function<Double> f) {
+		this.p = p;
+		this.f = f;
+	}
 
-    public Function<Double> derivate() {
-        return new Function<Double>() {
-            @Override
-            public Double f( Double x ) {
-                return (f.f( x + h ) - f.f( x )) / h;
-            }
+	public Function<Double> getF() {
+		return f;
+	}
 
-            @Override
-            public void update( double time ) {
-                f.update( time );
-            }
-        };
-    }
+	public Function<Double> derivate() {
+		return new Function<Double>() {
+			@Override
+			public Double f(Double x) {
+				return (f.f(x + h) - f.f(x)) / h;
+			}
 
-    private Function<Double> integrate( double c ) {
-        return new Function<Double>() {
+			@Override
+			public void update(double time) {
+				f.update(time);
+			}
+		};
+	}
 
-            double a;
+	private Function<Double> integrate(double c) {
+		return new Function<Double>() {
 
-            @Override
-            public Double f( Double x ) {
+			double a;
 
-                a += f.f( x ) * p.cordStep();
+			@Override
+			public Double f(Double x) {
 
-                return a + c;
-            }
+				a += f.f(x) * p.cordStep();
 
-            @Override
-            public void update( double time ) {
-                f.update( time );
-                a = 0;
-            }
+				return a + c;
+			}
 
-        };
-    }
+			@Override
+			public void update(double time) {
+				f.update(time);
+				a = 0;
+			}
 
-    public Function<Double> integrate() {
-        double c = 0;
+		};
+	}
 
-        for( double step = p.minCord(); step < 0; step += p.cordStep() ) {
-            c += f.f( step ) * p.cordStep();
-        }
+	public Function<Double> integrate() {
+		double c = 0;
 
-        return integrate( -c );
-    }
+		for (double step = p.minCord(); step < 0; step += p.cordStep()) {
+			c += f.f(step) * p.cordStep();
+		}
 
-    public Function<Double> integrateCentered() {
+		return integrate(-c);
+	}
 
-        double c = 0, min = 0, max = 0;
+	public Function<Double> integrateCentered() {
 
-        for( double step = p.minCord(); step < p.maxCord(); step += p.cordStep() ) {
-            c += f.f( step ) * p.cordStep();
+		double c = 0, min = 0, max = 0;
 
-            if( c < min ) min = c;
-            if( c > max ) max = c;
-        }
+		for (double step = p.minCord(); step < p.maxCord(); step += p.cordStep()) {
+			c += f.f(step) * p.cordStep();
 
-        System.out.println( max + " " + min );
+			if (c < min)
+				min = c;
+			if (c > max)
+				max = c;
+		}
 
-        double finalC = (max - min) / 2 * (min == 0 ? -1 : 1);
+		System.out.println(max + " " + min);
 
-        return integrate( finalC );
-    }
+		double finalC = (max - min) / 2 * (min == 0 ? -1 : 1);
+
+		return integrate(finalC);
+	}
 }
