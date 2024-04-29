@@ -9,4 +9,13 @@ public class Circumference extends Ellipse {
     public Circumference( double alpha, double beta, double r ) {
         super( alpha, beta, r, r );
     }
+
+    public double getR() {
+        return getA();
+    }
+
+    public void setR( double r ) {
+        setA( r );
+        setB( r );
+    }
 }

@@ -1,9 +1,9 @@
 package main;
 
+import parametrics.Circumference;
 import parametrics.Ellipse;
 import planes.Plane;
 import planes.RealPlane;
-import polygons.EllipseInscribed;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,36 +56,70 @@ public class Main extends JFrame {
 
 
         int SIZE = 1000;
-        double scale = 100; // quanti pixel sono una unita'
+        double scale = 50; // quanti pixel sono una unita'
         double speed = 0.01d;
 
 
         RealPlane plane = new RealPlane( SIZE, scale );
-        panel.addParameter( "a", 3d );
-        panel.addParameter( "b", 2d );
+        panel.addParameter( "t", 0 );
+        panel.addParameter( "r", 1 );
+        panel.addParameter( "a", 3 );
+        panel.addParameter( "b", 2 );
+        //panel.addParameter( "alpha", 2 );
+        //panel.addParameter( "beta", -2 );
 
-        Ellipse e = new Ellipse( 2, 3 ) {
-            /*@Override
-            public double getX( double t ) {
-                return 0;
-            }
-
-            @Override
-            public double getY( double t ) {
-                return 0;
-            }
-
-             */
+        Ellipse e = new Ellipse( 0, 0 ) {
 
             @Override
             public void update( double time ) {
+                super.update( time );
                 setA( panel.getParameter( "a" ) );
                 setB( panel.getParameter( "b" ) );
             }
         };
 
         plane.addParametric( e );
-        plane.addPolygon( new EllipseInscribed( e, 4 ) );
+
+        plane.addParametric( new Circumference( 0 ) {
+
+            @Override
+            public void update( double time ) {
+                super.update( time );
+                setR( panel.getParameter( "r" ) );
+                setAlpha( e.getX( panel.getParameter( "t" ) ) );
+                setBeta( e.getY( panel.getParameter( "t" ) ) );
+            }
+        } );
+
+
+        plane.addFunction( x -> {
+            double r = panel.getParameter( "r" );
+            double t = panel.getParameter( "t" );
+            double alpha = e.getX( t );
+            double beta = e.getY( t );
+            double a = panel.getParameter( "a" );
+            double b = panel.getParameter( "b" );
+
+            //double gamma = b * Math.sin( Math.acos( x / a ) );
+            double gamma = b * Math.sqrt( 1 - ((x * x) / (a * a)) );
+
+            return Math.pow( gamma - beta, 2 ) + Math.pow( x - alpha, 2 ) - (r * r);
+        } );
+
+        plane.addFunction( x -> {
+            double r = panel.getParameter( "r" );
+            double t = panel.getParameter( "t" );
+            double alpha = e.getX( t );
+            double beta = e.getY( t );
+            double a = panel.getParameter( "a" );
+            double b = panel.getParameter( "b" );
+
+            //double gamma = -b * Math.sin( Math.acos( x / a ) );
+            double gamma = -b * Math.sqrt( 1 - ((x * x) / (a * a)) );
+
+            return Math.pow( gamma - beta, 2 ) + Math.pow( x - alpha, 2 ) - (r * r);
+        } );
+
 
         new Main( plane, speed );
 

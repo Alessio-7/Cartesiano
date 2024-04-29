@@ -58,6 +58,10 @@ public class RealPlane extends FunctionPlane<Double> {
             double x1 = pixelToCord( x );
             int i = 0;
             for( Function<Double> funz : functions ) {
+
+                if( !funz.display() )
+                    continue;
+
                 int y = cordYToPixel( funz.f( x1 ) );
                 ys[i][x] = y;
                 i++;
@@ -70,6 +74,10 @@ public class RealPlane extends FunctionPlane<Double> {
         for( int tIter = 0; tIter <= iterations; tIter++ ) {
             int i = 0;
             for( Parametric parametric : parametrics ) {
+
+                if( !parametric.display() )
+                    continue;
+
                 t = Utils.lerp( parametric.getStart(), parametric.getEnd(), (double) tIter / iterations );
                 pametricsPoints[i][tIter][0] = cordXToPixel( parametric.getX( t ) );
                 pametricsPoints[i][tIter][1] = cordYToPixel( parametric.getY( t ) );
@@ -102,7 +110,12 @@ public class RealPlane extends FunctionPlane<Double> {
 
         g.setStroke( new BasicStroke( 2 ) );
         g.setColor( Color.white );
+
         for( int f = 0; f < functions.size(); f++ ) {
+
+            if( !functions.get( f ).display() )
+                continue;
+
             for( int x = 1; x < SIZE; x++ ) {
 
                 int y1 = ys[f][x - 1];
@@ -115,9 +128,14 @@ public class RealPlane extends FunctionPlane<Double> {
         }
 
         for( int p = 0; p < parametrics.size(); p++ ) {
+            
+            if( !parametrics.get( p ).display() )
+                continue;
+
             for( int i = 1; i < pametricsPoints[p].length; i++ ) {
                 g.drawLine( pametricsPoints[p][i - 1][0], pametricsPoints[p][i - 1][1], pametricsPoints[p][i][0], pametricsPoints[p][i][1] );
             }
+
         }
 
         g.setColor( Color.cyan );

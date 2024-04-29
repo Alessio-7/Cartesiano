@@ -36,8 +36,12 @@ public class ParametersPanel extends JFrame {
     }
 
     public void addParameter( String name, double value ) {
+        addParameter( name, value, 10d, -10d );
+    }
+
+    public void addParameter( String name, double value, double max, double min ) {
         parameters.put( name, value );
-        layout.add( new ParameterSlider( name ), gbc( 0, parameters.size() - 1, 1, 2 ) );
+        layout.add( new ParameterSlider( name, max, min ), gbc( 0, parameters.size() - 1, 1, 2 ) );
         //setSize( 300, parameters.size() < 4 ? parameters.size() * 150 : 500 );
         pack();
     }
@@ -47,12 +51,15 @@ public class ParametersPanel extends JFrame {
     }
 
     private class ParameterSlider extends JPanel {
-        private final JSpinner spinner;
+        private final JSpinner spinner, minSelector, maxSelector;
         private final String name;
         private final JSlider slider;
+        private double max, min;
 
-        private ParameterSlider( String name ) {
+        private ParameterSlider( String name, double max, double min ) {
             this.name = name;
+            this.max = max;
+            this.min = min;
 
             setBorder( BorderFactory.createMatteBorder( 0, 0, 2, 0, Color.lightGray ) );
             setLayout( new GridBagLayout() );
@@ -65,9 +72,27 @@ public class ParametersPanel extends JFrame {
             spinner.addChangeListener( e -> updateValueSpinner() );
             add( spinner, gbc( 1, 0, 1 ) );
 
-            slider = new JSlider( -500, 500, (int) (parameters.get( name ) * 100) );
+            slider = new JSlider( (int) (min * 100), (int) (max * 100), (int) (parameters.get( name ) * 100) );
             slider.addChangeListener( e -> updateValueSlider() );
             add( slider, gbc( 0, 1, 2 ) );
+
+            minSelector = new JSpinner( new SpinnerNumberModel( min, -10000, 10000, 1d ) );
+            minSelector.addChangeListener( e -> updateMin() );
+            add( minSelector, gbc( 0, 2, 1 ) );
+
+            maxSelector = new JSpinner( new SpinnerNumberModel( max, -10000, 10000, 1d ) );
+            maxSelector.addChangeListener( e -> updateMax() );
+            add( maxSelector, gbc( 1, 2, 1 ) );
+        }
+
+        private void updateMin() {
+            min = (double) minSelector.getValue();
+            slider.setMinimum( (int) min * 100 );
+        }
+
+        private void updateMax() {
+            max = (double) maxSelector.getValue();
+            slider.setMaximum( (int) max * 100 );
         }
 
         private void updateValueSpinner() {

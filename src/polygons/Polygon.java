@@ -34,4 +34,8 @@ public abstract class Polygon {
 
     public abstract void update( double time );
 
+    public boolean display() {
+        return true;
+    }
+
 }

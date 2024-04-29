@@ -53,11 +53,6 @@ public class Lissajous implements Parametric {
         return new Point( alpha, beta );
     }
 
-    @Override
-    public void update( double time ) {
-
-    }
-
     public double getAlpha() {
         return alpha;
     }

@@ -44,8 +44,4 @@ public class Hypotrochoid implements Parametric {
         return new Point( alpha, beta );
     }
 
-    @Override
-    public void update( double time ) {
-
-    }
 }

@@ -5,6 +5,10 @@ import primitives.Point;
 
 public interface Parametric {
 
+    default boolean display() {
+        return true;
+    }
+
     double getX( double t );
 
     double getY( double t );
@@ -15,5 +19,7 @@ public interface Parametric {
 
     Point getCenter();
 
-    void update( double time );
+    default void update( double time ) {
+
+    }
 }
