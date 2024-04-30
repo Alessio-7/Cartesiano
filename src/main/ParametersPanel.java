@@ -36,12 +36,12 @@ public class ParametersPanel extends JFrame {
     }
 
     public void addParameter( String name, double value ) {
-        addParameter( name, value, 10d, -10d );
+        addParameter( name, value, -10d, 10d );
     }
 
-    public void addParameter( String name, double value, double max, double min ) {
+    public void addParameter( String name, double value, double min, double max ) {
         parameters.put( name, value );
-        layout.add( new ParameterSlider( name, max, min ), gbc( 0, parameters.size() - 1, 1, 2 ) );
+        layout.add( new ParameterSlider( name, min, max ), gbc( 0, parameters.size() - 1, 1, 2 ) );
         //setSize( 300, parameters.size() < 4 ? parameters.size() * 150 : 500 );
         pack();
     }
@@ -56,7 +56,7 @@ public class ParametersPanel extends JFrame {
         private final JSlider slider;
         private double max, min;
 
-        private ParameterSlider( String name, double max, double min ) {
+        private ParameterSlider( String name, double min, double max ) {
             this.name = name;
             this.max = max;
             this.min = min;

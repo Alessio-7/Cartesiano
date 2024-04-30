@@ -4,6 +4,7 @@ import primitives.Point;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public abstract class Polygon {
 
@@ -16,12 +17,12 @@ public abstract class Polygon {
 
     public Polygon( boolean open, Point... points ) {
         this.open = open;
-        this.points = new ArrayList<>( Arrays.asList( points ) );
+        this.points = new ArrayList<>( Collections.synchronizedList( Arrays.asList( points ) ) );
     }
 
     public Polygon( boolean open ) {
         this.open = open;
-        this.points = new ArrayList<>();
+        this.points = new ArrayList<>( Collections.synchronizedList( new ArrayList<>() ) );
     }
 
     public boolean isOpen() {

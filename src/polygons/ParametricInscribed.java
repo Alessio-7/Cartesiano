@@ -3,86 +3,61 @@ package polygons;
 import funcs.Function;
 import parametrics.Parametric;
 import primitives.Point;
-import study.Study;
+import study.RootsFinder;
 
 public abstract class ParametricInscribed extends Polygon {
 
-	private Parametric parametric;
-	protected double d;
-	protected Point point1;
+    private final Parametric parametric;
+    protected int kf;
+    protected Point pk;
 
-	public ParametricInscribed(Parametric parametric) {
-		super(true);
-		this.parametric = parametric;
+    public ParametricInscribed( Parametric parametric ) {
+        super( true );
+        this.parametric = parametric;
 
-		// findDistance();
-	}
+        kf = 3;
 
-	public abstract double getCartesianY(double x);
+        // findDistance();
+    }
 
-	// public Function<Double> getIntersectionFunction1(Point point) {
-	public Function<Double> getIntersectionFunction1() {
-		return x -> {
-			return intersectionFunction(x, d, point1, 1);
-		};
-	}
+    public abstract double inverseGetX( double x );
 
-	// public Function<Double> getIntersectionFunction2(Point point) {
-	public Function<Double> getIntersectionFunction2() {
-		return x -> {
-			return intersectionFunction(x, d, point1, -1);
-		};
-	}
+    public double gamma( double x ) {
+        return (pk.y < 0 ? -1 : 1) * parametric.getY( inverseGetX( x ) );
+    }
 
-	public void findDistance() {
-		findDistance(0);
-	}
 
-	public void findDistance(double t) {
+    public double polynomial( double x, double d ) {
+        return Math.pow( gamma( x ) - pk.y, 2 ) + Math.pow( x - pk.x, 2 ) - Math.pow( d, 2 );
+    }
 
-		Point point = new Point(parametric.getX(t), parametric.getY(t));
+    protected double solution( double d ) {
+        int root = 0;
+        if( pk.x < 0 && pk.y > 0 || pk.x > 0 && pk.y < 0 ) root = 1;
+        return new RootsFinder( x -> polynomial( x, d ) ).newton();
+    }
 
-		Function<Double> intersectionFunction1 = x -> {
-			return intersectionFunction(x, d, point, 1);
-		};
 
-		Function<Double> intersectionFunction2 = x -> {
-			return intersectionFunction(x, d, point, -1);
-		};
+    public double findDistance( double t, double distance ) {
 
-		Function<Double> derivate1 = new Study(intersectionFunction1).derivate();
+        Function<Double> f = d -> {
+            double sum = 0;
 
-		Function<Double> derivate2 = new Study(intersectionFunction2).derivate();
+            pk = new Point( parametric.getX( t ), parametric.getY( t ) );
 
-		double xi = -intersectionFunction1.f(point.x) / derivate1.f(point.x);
-		xi -= intersectionFunction1.f(xi) / derivate1.f(xi);
-		xi -= intersectionFunction1.f(xi) / derivate1.f(xi); // newton iterations :D
+            Point pk1;
+            double xpk1;
+            for( int k = 1; k < kf; k++ ) {
+                xpk1 = solution( d );
+                //System.out.println( xpk1 );
+                pk1 = new Point( xpk1, gamma( xpk1 ) );
+                sum += Math.pow( -1, k ) * Point.distance( pk, pk1 );
+                pk = pk1;
+            }
 
-		double xj = -intersectionFunction2.f(point.x) / derivate2.f(point.x);
-		xj -= intersectionFunction2.f(xj) / derivate2.f(xj);
-		xj -= intersectionFunction2.f(xj) / derivate2.f(xj);
+            return sum;
+        };
 
-		double d1 = Point.distance(point, new Point(xi, getCartesianY(xi)));
-		double d2 = Point.distance(point, new Point(xj, getCartesianY(xj)));
-
-		System.out.println(point);
-		System.out.println(
-				intersectionFunction(point.x, d, point, 1) + "\n" + intersectionFunction(point.x, d, point, -1));
-		System.out.println();
-		System.out.println(xi + "\n" + xj);
-		System.out.println();
-		System.out.println(d1 + "\n" + d2);
-
-	}
-
-	private double intersectionFunction(double x, double r, Point c, int signGamma) {
-		double gamma = signGamma * getCartesianY(x);
-		return Math.pow(gamma - c.y, 2) + Math.pow(x - c.x, 2) - (r * r);
-	}
-
-	private Point getNextPoint(Point point) {
-		// TODO
-		return new Point(0, 0);
-	}
-
+        return f.f( distance );
+    }
 }

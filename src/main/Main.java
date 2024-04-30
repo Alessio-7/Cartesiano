@@ -1,185 +1,195 @@
 package main;
 
-import parametrics.Circumference;
-import parametrics.Ellipse;
+import funcs.Function;
 import planes.Plane;
 import planes.RealPlane;
-import polygons.ParametricInscribed;
-import primitives.*;
+import polygons.Polygon;
 import primitives.Point;
+import study.RootsFinder;
 
 import javax.swing.*;
-
-import funcs.Function;
-
 import java.awt.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Main extends JFrame {
 
-	static int posX;
-	static int posY;
-	static ParametersPanel panel;
+    static int posX;
+    static int posY;
+    static ParametersPanel panel;
 
-	public Main(Plane plane, double speed) {
-		super();
+    public Main( Plane plane, double speed ) {
+        super();
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLayout(new BorderLayout());
+        setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        setLayout( new BorderLayout() );
 
-		setResizable(false);
-		add(plane);
-		pack();
+        setResizable( false );
+        add( plane );
+        pack();
 
-		// int space = Toolkit.getDefaultToolkit().getScreenSize().width / 2 -
-		// getWidth();
-		int space = Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getWidth() / 2;
+        // int space = Toolkit.getDefaultToolkit().getScreenSize().width / 2 -
+        // getWidth();
+        int space = Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getWidth() / 2;
 
-		if (posX == 2) {
-			posX = 0;
-			posY++;
-		}
+        if( posX == 2 ) {
+            posX = 0;
+            posY++;
+        }
 
-		setLocation(posX++ * getWidth() + space, posY * getHeight());
-		// setLocation( Toolkit.getDefaultToolkit().getScreenSize().width / 2 -
-		// getWidth() / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 -
-		// getHeight() / 2 );
-		setVisible(true);
+        setLocation( posX++ * getWidth() + space, posY * getHeight() );
+        // setLocation( Toolkit.getDefaultToolkit().getScreenSize().width / 2 -
+        // getWidth() / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 -
+        // getHeight() / 2 );
+        setVisible( true );
 
-		Timer timer = new Timer();
-		TimerTask task = new TimerTask() {
-			@Override
-			public void run() {
-				plane.nextFrame(speed);
-			}
-		};
-		timer.scheduleAtFixedRate(task, 0, 17);
-		plane.nextFrame(0);
-	}
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                plane.nextFrame( speed );
+            }
+        };
+        timer.scheduleAtFixedRate( task, 0, 17 );
+        plane.nextFrame( 0 );
+    }
 
-	public static void main(String[] args) {
+    public static void main( String[] args ) {
 
-		panel = new ParametersPanel();
+        panel = new ParametersPanel();
 
-		int SIZE = 600;
-		double scale = 50; // quanti pixel sono una unita'
-		double speed = 0.01d;
+        int SIZE = 600;
+        double scale = 70; // quanti pixel sono una unita'
+        double speed = 0.01d;
 
-		RealPlane plane = new RealPlane(SIZE, scale);
-		panel.addParameter("t", 1.54);
-		panel.addParameter("r", 1);
-		panel.addParameter("a", 3);
-		panel.addParameter("b", 2);
-		// panel.addParameter( "alpha", 2 );
-		// panel.addParameter( "beta", -2 );
+        RealPlane plane = new RealPlane( SIZE, scale );
 
-		Ellipse e = new Ellipse(3, 2) {
 
-			@Override
-			public void update(double time) {
-				super.update(time);
-				setA(panel.getParameter("a"));
-				setB(panel.getParameter("b"));
-			}
-		};
+        /*
+        panel.addParameter( "t", 1.54 );
+        panel.addParameter( "r", 1 );
+        panel.addParameter( "a", 3 );
+        panel.addParameter( "b", 2 );
 
-		plane.addParametric(e);
+        Ellipse e = new Ellipse( 3, 2 ) {
 
-		plane.addParametric(new Circumference(1) {
 
-			@Override
-			public void update(double time) {
-				super.update(time);
-				setR(panel.getParameter("r"));
-				setAlpha(e.getX(panel.getParameter("t")));
-				setBeta(e.getY(panel.getParameter("t")));
-			}
-		});
+            @Override
+            public void update( double time ) {
+                super.update( time );
+                setA( panel.getParameter( "a" ) );
+                setB( panel.getParameter( "b" ) );
+            }
+        };
 
-		ParametricInscribed pi = new ParametricInscribed(e) {
+        plane.addParametric( e );
 
-			double a;
-			double b;
+        plane.addParametric( new Circumference( 1 ) {
 
-			@Override
-			public double getCartesianY(double x) {
-				// System.out.println(a + " " + b);
-				return b * Math.sqrt(1 - ((x * x) / (a * a)));
-			}
+            @Override
+            public boolean display() {
+                return true
+                        ;
+            }
 
-			@Override
-			public void update(double time) {
-				a = e.getA();
-				b = e.getB();
-				d = panel.getParameter("r");
-				point1 = new Point(e.getX(panel.getParameter("t")), e.getY(panel.getParameter("t")));
+            @Override
+            public void update( double time ) {
+                super.update( time );
+                setR( panel.getParameter( "r" ) );
+                setAlpha( e.getX( panel.getParameter( "t" ) ) );
+                setBeta( e.getY( panel.getParameter( "t" ) ) );
+            }
+        } );
 
-				findDistance(panel.getParameter("t"));
-			}
-		};
+        ParametricInscribed pi = new ParametricInscribed( e ) {
 
-		// Point point = new Point(e.getX(panel.getParameter("t")),
-		// e.getY(panel.getParameter("t")));
+            double a;
+            double b;
 
-		plane.addFunction(pi.getIntersectionFunction1());
-		plane.addFunction(pi.getIntersectionFunction2());
-		plane.addPolygon(pi);
+            @Override
+            public double inverseGetX( double x ) {
+                // System.out.println(a + " " + b);
+                return Math.acos( x / a );
+            }
 
-		plane.addFunction(new Function<Double>() {
+            @Override
+            public void update( double time ) {
+                a = e.getA();
+                b = e.getB();
 
-			@Override
-			public boolean display() {
-				return false;
-				// return true;
-			}
+                double t = panel.getParameter( "t" );
 
-			@Override
-			public Double f(Double x) {
-				double r = panel.getParameter("r");
-				double t = panel.getParameter("t");
-				double alpha = e.getX(t);
-				double beta = e.getY(t);
-				double a = panel.getParameter("a");
-				double b = panel.getParameter("b");
+                pk = new Point( e.getX( t ), e.getY( t ) );
 
-				double gamma = b * Math.sqrt(1 - ((x * x) / (a * a)));
+                double xpk1 = solution( panel.getParameter( "r" ) );
 
-				return Math.pow(gamma - beta, 2) + Math.pow(x - alpha, 2) - (r * r);
-			}
-		});
+                Point pk1 = new Point( xpk1, gamma( xpk1 ) );
+                //Point p = new Point( 1, 0 );
 
-		plane.addFunction(new Function<Double>() {
+                points.clear();
+                points.add( pk );
 
-			@Override
-			public boolean display() {
-				return false;
-				// return true;
-			}
+                points.add( pk1 );
 
-			@Override
-			public Double f(Double x) {
-				double r = panel.getParameter("r");
-				double t = panel.getParameter("t");
-				double alpha = e.getX(t);
-				double beta = e.getY(t);
-				double a = panel.getParameter("a");
-				double b = panel.getParameter("b");
 
-				double gamma = -b * Math.sqrt(1 - ((x * x) / (a * a)));
+            }
+        };
 
-				return Math.pow(gamma - beta, 2) + Math.pow(x - alpha, 2) - (r * r);
-			}
-		});
 
-		new Main(plane, speed);
+        plane.addPolygon( pi );
+        //plane.addFunction( x -> pi.polynome( x, panel.getParameter( "r" ) ) );
 
-		// new Main( RealPlane.getSample( SIZE, scale ), speed );
-		// new Main( ParametricPlane.getSample( SIZE, scale ), speed );
-		// new Main( ComplexPlane.getSample( SIZE, scale ), speed );
-		// new Main( VectorPlane.getSample( SIZE, scale ), speed );
+         */
 
-		panel.setVisible(true);
-	}
+
+        panel.addParameter( "i", 1, 0, 100 );
+        panel.addParameter( "a", 1 );
+        panel.addParameter( "b", 1 );
+        panel.addParameter( "c", 1 );
+        panel.addParameter( "d", 1 );
+        panel.addParameter( "e", 1 );
+
+        Function<Double> f = new Function<Double>() {
+
+            double a, b, c, d, e;
+
+            @Override
+            public Double f( Double x ) {
+                return a * Math.pow( x, 4 ) + b * Math.pow( x, 3 ) + c * Math.pow( x, 2 ) + d * x + e;
+            }
+
+            @Override
+            public void update( double time ) {
+                a = panel.getParameter( "a" );
+                b = panel.getParameter( "b" );
+                c = panel.getParameter( "c" );
+                d = panel.getParameter( "d" );
+                e = panel.getParameter( "e" );
+            }
+        };
+
+        plane.addFunction( f );
+
+        plane.addPolygon( new Polygon() {
+            @Override
+            public void update( double time ) {
+                points.clear();
+                double root = new RootsFinder( f ).steffen( 0, (int) panel.getParameter( "i" ) );
+
+                points.add( new Point( 0, 0 ) );
+                points.add( new Point( root, 0 ) );
+            }
+        } );
+
+
+        new Main( plane, speed );
+
+        // new Main( RealPlane.getSample( SIZE, scale ), speed );
+        //new Main( ParametricPlane.getSample( SIZE, scale ), speed );
+        //new Main( ComplexPlane.getSample( SIZE, scale ), speed );
+        //new Main( VectorPlane.getSample( SIZE, scale ), speed );
+
+        panel.setVisible( true );
+    }
 
 }
