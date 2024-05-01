@@ -1,14 +1,19 @@
 package main;
 
 import funcs.Function;
+import parametrics.Circumference;
+import parametrics.Ellipse;
+import parametrics.Parametric;
+import planes.ComplexPlane;
 import planes.Plane;
 import planes.RealPlane;
 import polygons.Polygon;
+import primitives.Complex;
 import primitives.Point;
-import study.RootsFinder;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,6 +22,9 @@ public class Main extends JFrame {
     static int posX;
     static int posY;
     static ParametersPanel panel;
+    static InspectPanel inspectPanel;
+
+    static ArrayList<Object> toUpdate;
 
     public Main( Plane plane, double speed ) {
         super();
@@ -30,14 +38,15 @@ public class Main extends JFrame {
 
         // int space = Toolkit.getDefaultToolkit().getScreenSize().width / 2 -
         // getWidth();
-        int space = Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getWidth() / 2;
+        //int space = Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getWidth() / 2 + 100;
+        int space = 700;
 
         if( posX == 2 ) {
             posX = 0;
             posY++;
         }
 
-        setLocation( posX++ * getWidth() + space, posY * getHeight() );
+        setLocation( posX++ * getWidth() + space, posY * getHeight() + 20 );
         // setLocation( Toolkit.getDefaultToolkit().getScreenSize().width / 2 -
         // getWidth() / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 -
         // getHeight() / 2 );
@@ -48,6 +57,12 @@ public class Main extends JFrame {
             @Override
             public void run() {
                 plane.nextFrame( speed );
+
+                for( Object o : toUpdate ) {
+                    if( o instanceof Function ) ((Function) o).update( plane.getTime() );
+                    else if( o instanceof Parametric ) ((Parametric) o).update( plane.getTime() );
+                    else if( o instanceof Polygon ) ((Polygon) o).update( plane.getTime() );
+                }
             }
         };
         timer.scheduleAtFixedRate( task, 0, 17 );
@@ -56,23 +71,37 @@ public class Main extends JFrame {
 
     public static void main( String[] args ) {
 
-        panel = new ParametersPanel();
+        try {
+            UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
+        } catch( ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e ) {
+            e.printStackTrace();
+        }
 
-        int SIZE = 600;
+        panel = new ParametersPanel();
+        inspectPanel = new InspectPanel();
+        toUpdate = new ArrayList<>();
+
+        int SIZE = 1000;
         double scale = 70; // quanti pixel sono una unita'
         double speed = 0.01d;
 
         RealPlane plane = new RealPlane( SIZE, scale );
+        ComplexPlane plane2 = new ComplexPlane( SIZE, scale, false );
 
 
-        /*
         panel.addParameter( "t", 1.54 );
         panel.addParameter( "r", 1 );
         panel.addParameter( "a", 3 );
         panel.addParameter( "b", 2 );
 
+        inspectPanel.addInspectObject( "center" );
+
         Ellipse e = new Ellipse( 3, 2 ) {
 
+            @Override
+            public boolean display() {
+                return false;
+            }
 
             @Override
             public void update( double time ) {
@@ -82,14 +111,16 @@ public class Main extends JFrame {
             }
         };
 
-        plane.addParametric( e );
-
-        plane.addParametric( new Circumference( 1 ) {
+        Circumference c = new Circumference( 1 ) {
 
             @Override
             public boolean display() {
-                return true
-                        ;
+                return true;
+            }
+
+            @Override
+            public Color getColor() {
+                return Color.green;
             }
 
             @Override
@@ -98,17 +129,29 @@ public class Main extends JFrame {
                 setR( panel.getParameter( "r" ) );
                 setAlpha( e.getX( panel.getParameter( "t" ) ) );
                 setBeta( e.getY( panel.getParameter( "t" ) ) );
-            }
-        } );
 
-        ParametricInscribed pi = new ParametricInscribed( e ) {
+                inspectPanel.update( "center", new Point( getAlpha(), getBeta() ) );
+            }
+        };
+
+
+/*
+
+        plane.addParametric( e );
+        plane.addParametric(c );
+
+        inspectPanel.addInspectObject( "root1" );
+        inspectPanel.addInspectObject( "root2" );
+        inspectPanel.addInspectObject( "gamma" );
+
+
+        ParametricInscribed pi = new ParametricInscribed( e, 4 ) {
 
             double a;
             double b;
 
             @Override
             public double inverseGetX( double x ) {
-                // System.out.println(a + " " + b);
                 return Math.acos( x / a );
             }
 
@@ -121,68 +164,35 @@ public class Main extends JFrame {
 
                 pk = new Point( e.getX( t ), e.getY( t ) );
 
-                double xpk1 = solution( panel.getParameter( "r" ) );
+                double[] xs = allSolutions( panel.getParameter( "r" ) );
 
-                Point pk1 = new Point( xpk1, gamma( xpk1 ) );
-                //Point p = new Point( 1, 0 );
+                Point pk1 = new Point( xs[0], gamma( xs[0] ) );
+                Point pk2 = new Point( xs[1], gamma( xs[1] ) );
+
+                inspectPanel.update( "root1", xs[0] );
+                inspectPanel.update( "root2", xs[1] );
+                inspectPanel.update( "gamma", gamma( pk.x ) );
 
                 points.clear();
-                points.add( pk );
-
                 points.add( pk1 );
-
-
+                points.add( pk );
+                points.add( pk2 );
             }
         };
-
 
         plane.addPolygon( pi );
-        //plane.addFunction( x -> pi.polynome( x, panel.getParameter( "r" ) ) );
 
-         */
+        plane.addFunction( x -> pi.gamma( x ) );
 
+ */
 
-        panel.addParameter( "i", 1, 0, 100 );
-        panel.addParameter( "a", 1 );
-        panel.addParameter( "b", 1 );
-        panel.addParameter( "c", 1 );
-        panel.addParameter( "d", 1 );
-        panel.addParameter( "e", 1 );
+        plane2.addFunction( x -> new Complex( e.getX( x.a ), c.getX( x.b ) ) );
 
-        Function<Double> f = new Function<Double>() {
+        toUpdate.add( e );
+        toUpdate.add( c );
 
-            double a, b, c, d, e;
-
-            @Override
-            public Double f( Double x ) {
-                return a * Math.pow( x, 4 ) + b * Math.pow( x, 3 ) + c * Math.pow( x, 2 ) + d * x + e;
-            }
-
-            @Override
-            public void update( double time ) {
-                a = panel.getParameter( "a" );
-                b = panel.getParameter( "b" );
-                c = panel.getParameter( "c" );
-                d = panel.getParameter( "d" );
-                e = panel.getParameter( "e" );
-            }
-        };
-
-        plane.addFunction( f );
-
-        plane.addPolygon( new Polygon() {
-            @Override
-            public void update( double time ) {
-                points.clear();
-                double root = new RootsFinder( f ).steffen( 0, (int) panel.getParameter( "i" ) );
-
-                points.add( new Point( 0, 0 ) );
-                points.add( new Point( root, 0 ) );
-            }
-        } );
-
-
-        new Main( plane, speed );
+        //new Main( plane, speed );
+        new Main( plane2, speed );
 
         // new Main( RealPlane.getSample( SIZE, scale ), speed );
         //new Main( ParametricPlane.getSample( SIZE, scale ), speed );
@@ -190,6 +200,7 @@ public class Main extends JFrame {
         //new Main( VectorPlane.getSample( SIZE, scale ), speed );
 
         panel.setVisible( true );
+        inspectPanel.setVisible( true );
     }
 
 }

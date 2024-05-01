@@ -11,11 +11,7 @@ public class ParametersPanel extends JFrame {
     public ParametersPanel() {
         super( "Parameters panel" );
 
-        try {
-            UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
-        } catch( ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e ) {
-            e.printStackTrace();
-        }
+        setLocation( 10, 20 );
 
         setMinimumSize( new Dimension( 350, 200 ) );
         parameters = new HashMap<>();

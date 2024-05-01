@@ -87,4 +87,8 @@ public abstract class Plane extends JPanel {
     public Dimension getPreferredSize() {
         return new Dimension( SIZE, SIZE );
     }
+
+    public double getTime() {
+        return time;
+    }
 }

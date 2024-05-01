@@ -11,30 +11,40 @@ public abstract class ParametricInscribed extends Polygon {
     protected int kf;
     protected Point pk;
 
-    public ParametricInscribed( Parametric parametric ) {
+    public ParametricInscribed( Parametric parametric, int kf ) {
         super( true );
         this.parametric = parametric;
-
-        kf = 3;
+        this.kf = kf;
 
         // findDistance();
     }
 
-    public abstract double inverseGetX( double x );
+    protected abstract double inverseGetX( double x );
 
-    public double gamma( double x ) {
-        return (pk.y < 0 ? -1 : 1) * parametric.getY( inverseGetX( x ) );
+    public double basicGamma( double x ) {
+        return parametric.getY( inverseGetX( x ) );
     }
 
+    public double gamma( double x ) {
+        return (pk.y < 0 ? -1 : 1) * basicGamma( x );
+    }
 
     public double polynomial( double x, double d ) {
         return Math.pow( gamma( x ) - pk.y, 2 ) + Math.pow( x - pk.x, 2 ) - Math.pow( d, 2 );
     }
 
+    protected double[] allSolutions( double d ) {
+        RootsFinder finder = new RootsFinder( x -> polynomial( x, d ) );
+        return new double[]{
+                finder.newton( pk.x + d ),
+                finder.newton( pk.x - d )
+        };
+    }
+
     protected double solution( double d ) {
-        int root = 0;
+        int root = -1;
         if( pk.x < 0 && pk.y > 0 || pk.x > 0 && pk.y < 0 ) root = 1;
-        return new RootsFinder( x -> polynomial( x, d ) ).newton();
+        return new RootsFinder( x -> polynomial( x, d ) ).newton( pk.x + (root * d) );
     }
 
 

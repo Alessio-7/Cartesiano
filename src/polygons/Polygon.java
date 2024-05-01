@@ -2,9 +2,9 @@ package polygons;
 
 import primitives.Point;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public abstract class Polygon {
 
@@ -16,13 +16,14 @@ public abstract class Polygon {
     }
 
     public Polygon( boolean open, Point... points ) {
-        this.open = open;
-        this.points = new ArrayList<>( Collections.synchronizedList( Arrays.asList( points ) ) );
+        this( open );
+        this.points.addAll( Arrays.asList( points ) );
     }
 
     public Polygon( boolean open ) {
         this.open = open;
-        this.points = new ArrayList<>( Collections.synchronizedList( new ArrayList<>() ) );
+        this.points = new ArrayList<>();
+        //System.out.println(this.points.ensureCapacity(  ););
     }
 
     public boolean isOpen() {
@@ -37,6 +38,10 @@ public abstract class Polygon {
 
     public boolean display() {
         return true;
+    }
+
+    public Color getColor() {
+        return Color.red;
     }
 
 }

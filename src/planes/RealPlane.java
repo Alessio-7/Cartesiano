@@ -121,12 +121,14 @@ public class RealPlane extends FunctionPlane<Double> {
             if( !functions.get( f ).display() )
                 continue;
 
+            g.setColor( functions.get( f ).getColor() );
+
             for( int x = 1; x < SIZE; x++ ) {
 
                 int y1 = ys[f][x - 1];
                 int y2 = ys[f][x];
 
-                //if( y1 < 1 || y2 < 1 ) continue;
+                if( y1 < 1 || y2 < 1 ) continue;
 
                 g.drawLine( x - 1, y1, x, y2 );
             }
@@ -137,6 +139,8 @@ public class RealPlane extends FunctionPlane<Double> {
             if( !parametrics.get( p ).display() )
                 continue;
 
+            g.setColor( parametrics.get( p ).getColor() );
+
             for( int i = 1; i < pametricsPoints[p].length; i++ ) {
                 g.drawLine( pametricsPoints[p][i - 1][0], pametricsPoints[p][i - 1][1], pametricsPoints[p][i][0],
                         pametricsPoints[p][i][1] );
@@ -144,15 +148,20 @@ public class RealPlane extends FunctionPlane<Double> {
 
         }
 
-        g.setColor( Color.cyan );
+        g.setStroke( new BasicStroke( 3 ) );
 
         for( Polygon polygon : polygons ) {
 
+            g.setColor( polygon.getColor() );
             Point[] points = polygon.getPoints();
 
             for( int i = 1; i < points.length; i++ ) {
-                g.drawLine( cordXToPixel( points[i - 1].x ), cordYToPixel( points[i - 1].y ), cordXToPixel( points[i].x ),
-                        cordYToPixel( points[i].y ) );
+                try {
+                    g.drawLine( cordXToPixel( points[i - 1].x ), cordYToPixel( points[i - 1].y ), cordXToPixel( points[i].x ),
+                            cordYToPixel( points[i].y ) );
+                } catch( NullPointerException e ) {
+                    System.out.println( points[i - 1] );
+                }
             }
 
             if( !polygon.isOpen() ) {
