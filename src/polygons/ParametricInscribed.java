@@ -2,14 +2,17 @@ package polygons;
 
 import funcs.Function;
 import parametrics.Parametric;
+import primitives.Mat;
 import primitives.Point;
-import study.RootsFinder;
+import primitives.Vec;
+import primitives.Vec2;
+import study.Study;
 
 public abstract class ParametricInscribed extends Polygon {
 
     private final Parametric parametric;
     protected int kf;
-    protected Point pk;
+    protected double tpk;
 
     public ParametricInscribed( Parametric parametric, int kf ) {
         super( true );
@@ -19,32 +22,36 @@ public abstract class ParametricInscribed extends Polygon {
         // findDistance();
     }
 
-    protected abstract double inverseGetX( double x );
+    private Mat inverseJacobian( double d, Vec v ) {
 
-    public double basicGamma( double x ) {
-        return parametric.getY( inverseGetX( x ) );
-    }
+        Function<Double> dqx = new Study( parametric::getX ).derivate();
+        Function<Double> dqy = new Study( parametric::getY ).derivate();
 
-    public double gamma( double x ) {
-        return (pk.y < 0 ? -1 : 1) * basicGamma( x );
-    }
+        double scalar = 1 / (d * (dqx.f( v.i() ) * Math.cos( v.j() ) + dqy.f( v.i() ) * Math.sin( v.j() )));
 
-    public double polynomial( double x, double d ) {
-        return Math.pow( gamma( x ) - pk.y, 2 ) + Math.pow( x - pk.x, 2 ) - Math.pow( d, 2 );
-    }
-
-    protected double[] allSolutions( double d ) {
-        RootsFinder finder = new RootsFinder( x -> polynomial( x, d ) );
-        return new double[]{
-                finder.newton( pk.x + d ),
-                finder.newton( pk.x - d )
-        };
+        return new Mat(
+                new double[]{d * Math.cos( v.j() ), d * Math.sin( v.j() )},
+                new double[]{dqy.f( v.i() ), -dqx.f( v.i() )}
+        ).scale( scalar );
     }
 
     protected double solution( double d ) {
-        int root = -1;
-        if( pk.x < 0 && pk.y > 0 || pk.x > 0 && pk.y < 0 ) root = 1;
-        return new RootsFinder( x -> polynomial( x, d ) ).newton( pk.x + (root * d) );
+
+        double x = tpk, y = 0;
+        Vec xi = new Vec2( x, y );
+
+        Vec2 u = new Vec2(
+                parametric.getX( x ) - d * Math.cos( y ) - parametric.getX( tpk ),
+                parametric.getY( x ) - d * Math.sin( y ) - parametric.getY( tpk )
+        );
+
+        xi = xi.sub( inverseJacobian( d, xi ).timesVec( u ) );
+        xi = xi.sub( inverseJacobian( d, xi ).timesVec( u ) );
+        //xi = xi.sub( inverseJacobian( d, xi ).timesVec( u ) );
+        //xi = xi.sub( inverseJacobian( d, xi ).timesVec( u ) );
+
+        return xi.i();
+
     }
 
 
@@ -53,14 +60,15 @@ public abstract class ParametricInscribed extends Polygon {
         Function<Double> f = d -> {
             double sum = 0;
 
-            pk = new Point( parametric.getX( t ), parametric.getY( t ) );
+            tpk = t;
 
+            Point pk = new Point( parametric.getX( t ), parametric.getY( t ) );
             Point pk1;
-            double xpk1;
+            double tpk1;
             for( int k = 1; k < kf; k++ ) {
-                xpk1 = solution( d );
+                tpk1 = solution( d );
                 //System.out.println( xpk1 );
-                pk1 = new Point( xpk1, gamma( xpk1 ) );
+                pk1 = new Point( parametric.getX( tpk1 ), parametric.getY( tpk1 ) );
                 sum += Math.pow( -1, k ) * Point.distance( pk, pk1 );
                 pk = pk1;
             }

@@ -27,7 +27,7 @@ public class Complex {
     }
 
     public static Complex fromVec2( Vec2 v ) {
-        return new Complex( v.a, v.b );
+        return new Complex( v.i(), v.j() );
     }
 
     public Complex pow( double p ) {

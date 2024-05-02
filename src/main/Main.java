@@ -4,11 +4,10 @@ import funcs.Function;
 import parametrics.Circumference;
 import parametrics.Ellipse;
 import parametrics.Parametric;
-import planes.ComplexPlane;
 import planes.Plane;
 import planes.RealPlane;
+import polygons.ParametricInscribed;
 import polygons.Polygon;
-import primitives.Complex;
 import primitives.Point;
 
 import javax.swing.*;
@@ -36,10 +35,7 @@ public class Main extends JFrame {
         add( plane );
         pack();
 
-        // int space = Toolkit.getDefaultToolkit().getScreenSize().width / 2 -
-        // getWidth();
-        //int space = Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getWidth() / 2 + 100;
-        int space = 700;
+        int space = 690;
 
         if( posX == 2 ) {
             posX = 0;
@@ -47,9 +43,6 @@ public class Main extends JFrame {
         }
 
         setLocation( posX++ * getWidth() + space, posY * getHeight() + 20 );
-        // setLocation( Toolkit.getDefaultToolkit().getScreenSize().width / 2 -
-        // getWidth() / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 -
-        // getHeight() / 2 );
         setVisible( true );
 
         Timer timer = new Timer();
@@ -81,12 +74,12 @@ public class Main extends JFrame {
         inspectPanel = new InspectPanel();
         toUpdate = new ArrayList<>();
 
-        int SIZE = 1000;
+        int SIZE = 600;
         double scale = 70; // quanti pixel sono una unita'
         double speed = 0.01d;
 
         RealPlane plane = new RealPlane( SIZE, scale );
-        ComplexPlane plane2 = new ComplexPlane( SIZE, scale, false );
+        //ComplexPlane plane2 = new ComplexPlane( SIZE, scale );
 
 
         panel.addParameter( "t", 1.54 );
@@ -95,12 +88,13 @@ public class Main extends JFrame {
         panel.addParameter( "b", 2 );
 
         inspectPanel.addInspectObject( "center" );
+        inspectPanel.addInspectObject( "tpk1" );
 
         Ellipse e = new Ellipse( 3, 2 ) {
 
             @Override
             public boolean display() {
-                return false;
+                return true;
             }
 
             @Override
@@ -134,36 +128,28 @@ public class Main extends JFrame {
             }
         };
 
-
-/*
-
-        plane.addParametric( e );
-        plane.addParametric(c );
-
-        inspectPanel.addInspectObject( "root1" );
-        inspectPanel.addInspectObject( "root2" );
-        inspectPanel.addInspectObject( "gamma" );
-
-
         ParametricInscribed pi = new ParametricInscribed( e, 4 ) {
 
             double a;
             double b;
 
             @Override
-            public double inverseGetX( double x ) {
-                return Math.acos( x / a );
-            }
-
-            @Override
             public void update( double time ) {
                 a = e.getA();
                 b = e.getB();
 
-                double t = panel.getParameter( "t" );
+                tpk = panel.getParameter( "t" );
 
-                pk = new Point( e.getX( t ), e.getY( t ) );
+                double tpk1 = solution( panel.getParameter( "r" ) );
+                inspectPanel.update( "tpk1", tpk1 );
 
+                Point pk1 = new Point( e.getX( tpk1 ), e.getY( tpk1 ) );
+
+                points.clear();
+                points.add( new Point( e.getX( tpk ), e.getY( tpk ) ) );
+                points.add( pk1 );
+
+                /*
                 double[] xs = allSolutions( panel.getParameter( "r" ) );
 
                 Point pk1 = new Point( xs[0], gamma( xs[0] ) );
@@ -177,24 +163,19 @@ public class Main extends JFrame {
                 points.add( pk1 );
                 points.add( pk );
                 points.add( pk2 );
+                */
             }
         };
 
+        plane.addParametric( e );
+        plane.addParametric( c );
         plane.addPolygon( pi );
 
-        plane.addFunction( x -> pi.gamma( x ) );
+        //plane2.addFunction( x -> new Complex( e.getX( x.a ) - c.getX( x.b ), e.getY( x.a ) - c.getY( x.b ) ) );
 
- */
+        new Main( plane, speed );
 
-        plane2.addFunction( x -> new Complex( e.getX( x.a ), c.getX( x.b ) ) );
-
-        toUpdate.add( e );
-        toUpdate.add( c );
-
-        //new Main( plane, speed );
-        new Main( plane2, speed );
-
-        // new Main( RealPlane.getSample( SIZE, scale ), speed );
+        //new Main( RealPlane.getSample( SIZE, scale ), speed );
         //new Main( ParametricPlane.getSample( SIZE, scale ), speed );
         //new Main( ComplexPlane.getSample( SIZE, scale ), speed );
         //new Main( VectorPlane.getSample( SIZE, scale ), speed );
