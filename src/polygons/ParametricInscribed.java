@@ -3,7 +3,6 @@ package polygons;
 import funcs.Function;
 import parametrics.Parametric;
 import primitives.Mat;
-import primitives.Point;
 import primitives.Vec;
 import primitives.Vec2;
 import study.Study;
@@ -22,60 +21,82 @@ public abstract class ParametricInscribed extends Polygon {
         // findDistance();
     }
 
-    private Mat inverseJacobian( double d, Vec v ) {
-
-        Function<Double> dqx = new Study( parametric::getX ).derivate();
-        Function<Double> dqy = new Study( parametric::getY ).derivate();
-
-        double scalar = 1 / (d * (dqx.f( v.i() ) * Math.cos( v.j() ) + dqy.f( v.i() ) * Math.sin( v.j() )));
-
-        return new Mat(
-                new double[]{d * Math.cos( v.j() ), d * Math.sin( v.j() )},
-                new double[]{dqy.f( v.i() ), -dqx.f( v.i() )}
-        ).scale( scalar );
+    protected Function<Double> derivateParametricGetX() {
+        return new Study( parametric::getX ).derivate();
     }
 
-    protected double solution( double d ) {
+    protected Function<Double> derivateParametricGetY() {
+        return new Study( parametric::getY ).derivate();
+    }
 
-        double x = tpk, y = 0;
-        Vec xi = new Vec2( x, y );
+    private Mat inverseJacobian( double d, double t, double u ) {
 
-        Vec2 u = new Vec2(
-                parametric.getX( x ) - d * Math.cos( y ) - parametric.getX( tpk ),
-                parametric.getY( x ) - d * Math.sin( y ) - parametric.getY( tpk )
-        );
+        Function<Double> dqx = derivateParametricGetX();
+        Function<Double> dqy = derivateParametricGetY();
 
-        xi = xi.sub( inverseJacobian( d, xi ).timesVec( u ) );
-        xi = xi.sub( inverseJacobian( d, xi ).timesVec( u ) );
-        //xi = xi.sub( inverseJacobian( d, xi ).timesVec( u ) );
-        //xi = xi.sub( inverseJacobian( d, xi ).timesVec( u ) );
+        double scalar = 1 / (d * ((dqx.f( t ) * Math.cos( u )) + (dqy.f( t ) * Math.sin( u ))));
 
-        return xi.i();
+        return new Mat( new double[]{d * Math.cos( u ), d * Math.sin( u )}, new double[]{dqy.f( t ), -dqx.f( t )} ).scale( scalar );
+    }
 
+    protected Vec2 f( double d, double t, double u ) {
+        return new Vec2( parametric.getX( t ) - d * Math.cos( u ) - parametric.getX( tpk ), parametric.getY( t ) - d * Math.sin( u ) - parametric.getY( tpk ) );
+    }
+
+    protected Vec2 f( double d, Vec2 v ) {
+        return f( d, v.i(), v.j() );
+    }
+
+    protected double solution2( double d, Vec2 a, Vec2 b ) {
+        Vec2 fa = f( d, a );
+        Vec2 fb = f( d, b );
+        if( fa.dot( fb ) >= 0 )
+            return Double.NEGATIVE_INFINITY;
+        if( fa.mod() < fb.mod() ) {
+            Vec2 t = b;
+            b = a;
+            a = t;
+        }
+        Vec2 c = a, s = new Vec2( 0, 0 );
+        boolean mflag = true;
+
+        fa = f( d, a );
+        fb = f( d, b );
+        Vec2 fc, fs = f( d, s );
+        while( !((fb.i() < 0.05 || fs.i() < 0.05) || b.sub( a ).mod() < 0.05) ) {
+            fa = f( d, a );
+            fb = f( d, b );
+            fc = f( d, c );
+            fs = f( d, s );
+
+            if( !fa.equals( fc ) && !fb.equals( fc ) ) {
+                //s= nuh uh
+
+            }
+        }
+
+        return 0;
+    }
+
+    protected double solution( double d, double x0 ) {
+
+        double x = tpk;
+        Vec xi = new Vec2( x, 0 );
+
+        int iterations = 0;
+        do {
+            xi = xi.sub( inverseJacobian( d, xi.i(), xi.j() ).timesVec( f( d, xi.i(), xi.j() ) ) );
+            if( iterations++ > 2000 ) break;
+        } while( f( d, xi.i(), xi.j() ).mod() > 0.1 );
+
+        if( Double.isNaN( xi.mod() ) )
+            return 0;
+
+        return xi.i() % (2 * Math.PI);
     }
 
 
     public double findDistance( double t, double distance ) {
-
-        Function<Double> f = d -> {
-            double sum = 0;
-
-            tpk = t;
-
-            Point pk = new Point( parametric.getX( t ), parametric.getY( t ) );
-            Point pk1;
-            double tpk1;
-            for( int k = 1; k < kf; k++ ) {
-                tpk1 = solution( d );
-                //System.out.println( xpk1 );
-                pk1 = new Point( parametric.getX( tpk1 ), parametric.getY( tpk1 ) );
-                sum += Math.pow( -1, k ) * Point.distance( pk, pk1 );
-                pk = pk1;
-            }
-
-            return sum;
-        };
-
-        return f.f( distance );
+        return 0;
     }
 }

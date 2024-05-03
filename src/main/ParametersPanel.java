@@ -11,7 +11,7 @@ public class ParametersPanel extends JFrame {
     public ParametersPanel() {
         super( "Parameters panel" );
 
-        setLocation( 10, 20 );
+        setLocation( 0, 20 );
 
         setMinimumSize( new Dimension( 350, 200 ) );
         parameters = new HashMap<>();

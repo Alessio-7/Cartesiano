@@ -12,9 +12,9 @@ public class InspectPanel extends JFrame {
     public InspectPanel() {
         super( "Inspect panel" );
 
-        setLocation( 350, 20 );
+        setLocation( 340, 20 );
 
-        setMinimumSize( new Dimension( 350, 200 ) );
+        setMinimumSize( new Dimension( 360, 200 ) );
         inspectComponents = new HashMap<>();
         layout = new JPanel( new GridBagLayout() );
 
@@ -43,6 +43,8 @@ public class InspectPanel extends JFrame {
     }
 
     public void update( String name, Object value ) {
+        if( !inspectComponents.containsKey( name ) )
+            addInspectObject( name );
         inspectComponents.get( name ).update( value );
     }
 
@@ -53,7 +55,7 @@ public class InspectPanel extends JFrame {
         private InspectComponent( String name ) {
             super( new GridBagLayout() );
 
-            setMinimumSize( new Dimension( 0, 125 ) );
+            setMinimumSize( new Dimension( 0, 150 ) );
             setBorder( BorderFactory.createMatteBorder( 0, 0, 2, 0, Color.lightGray ) );
 
             label = new JLabel( name );
@@ -61,7 +63,10 @@ public class InspectPanel extends JFrame {
             add( label, gbc( 0, 0 ) );
 
             label = new JLabel( "" );
-            add( label, gbc( 1, 0 ) );
+            GridBagConstraints gbc = gbc( 1, 0 );
+            label.setHorizontalTextPosition( JLabel.RIGHT );
+            gbc.anchor = GridBagConstraints.EAST;
+            add( label, gbc );
         }
 
         private void update( Object value ) {

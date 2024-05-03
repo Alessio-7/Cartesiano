@@ -1,5 +1,7 @@
 package primitives;
 
+import java.util.Arrays;
+
 public class Vec {
 
     public final double[] v;
@@ -78,5 +80,22 @@ public class Vec {
             s += e + ", ";
 
         return s.substring( 0, s.length() - 2 ) + " ]";
+    }
+
+    public Vec2 toVec2() {
+        return new Vec2( i(), j() );
+    }
+
+    @Override
+    public boolean equals( Object o ) {
+        if( this == o ) return true;
+        if( o == null || getClass() != o.getClass() ) return false;
+        Vec vec = (Vec) o;
+        return Arrays.equals( v, vec.v );
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode( v );
     }
 }

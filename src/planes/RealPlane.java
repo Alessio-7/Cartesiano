@@ -100,12 +100,10 @@ public class RealPlane extends FunctionPlane<Double> {
 
         g.setColor( Color.darkGray.darker().darker() );
         for( int x = (SIZE % scaleInt) / 2; x < SIZE; x += scaleInt ) {
-            // g.drawLine( x, HALF_SIZE - 3, x, HALF_SIZE + 3 );
             g.drawLine( x, 0, x, SIZE );
         }
 
         for( int y = (SIZE % scaleInt) / 2; y < SIZE; y += scaleInt ) {
-            // g.drawLine( HALF_SIZE - 3, y, HALF_SIZE + 3, y );
             g.drawLine( 0, y, SIZE, y );
         }
 
@@ -118,8 +116,7 @@ public class RealPlane extends FunctionPlane<Double> {
 
         for( int f = 0; f < functions.size(); f++ ) {
 
-            if( !functions.get( f ).display() )
-                continue;
+            if( !functions.get( f ).display() | ys[f].length < 2 ) continue;
 
             g.setColor( functions.get( f ).getColor() );
 
@@ -136,14 +133,12 @@ public class RealPlane extends FunctionPlane<Double> {
 
         for( int p = 0; p < parametrics.size(); p++ ) {
 
-            if( !parametrics.get( p ).display() )
-                continue;
+            if( !parametrics.get( p ).display() | pametricsPoints[p].length < 2 ) continue;
 
             g.setColor( parametrics.get( p ).getColor() );
 
             for( int i = 1; i < pametricsPoints[p].length; i++ ) {
-                g.drawLine( pametricsPoints[p][i - 1][0], pametricsPoints[p][i - 1][1], pametricsPoints[p][i][0],
-                        pametricsPoints[p][i][1] );
+                g.drawLine( pametricsPoints[p][i - 1][0], pametricsPoints[p][i - 1][1], pametricsPoints[p][i][0], pametricsPoints[p][i][1] );
             }
 
         }
@@ -155,18 +150,14 @@ public class RealPlane extends FunctionPlane<Double> {
             g.setColor( polygon.getColor() );
             Point[] points = polygon.getPoints();
 
+            if( points.length < 2 | !polygon.display() ) continue;
+
             for( int i = 1; i < points.length; i++ ) {
-                try {
-                    g.drawLine( cordXToPixel( points[i - 1].x ), cordYToPixel( points[i - 1].y ), cordXToPixel( points[i].x ),
-                            cordYToPixel( points[i].y ) );
-                } catch( NullPointerException e ) {
-                    System.out.println( points[i - 1] );
-                }
+                g.drawLine( cordXToPixel( points[i - 1].x ), cordYToPixel( points[i - 1].y ), cordXToPixel( points[i].x ), cordYToPixel( points[i].y ) );
             }
 
             if( !polygon.isOpen() ) {
-                g.drawLine( cordXToPixel( points[0].x ), cordYToPixel( points[0].y ),
-                        cordXToPixel( points[points.length - 1].x ), cordYToPixel( points[points.length - 1].y ) );
+                g.drawLine( cordXToPixel( points[0].x ), cordYToPixel( points[0].y ), cordXToPixel( points[points.length - 1].x ), cordYToPixel( points[points.length - 1].y ) );
             }
         }
     }

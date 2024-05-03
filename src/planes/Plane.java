@@ -35,7 +35,10 @@ public abstract class Plane extends JPanel {
         g.setRenderingHint( RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY );
         g.setRenderingHint( RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE );*/
 
-        paintChild( g );
+        try {
+            paintChild( g );
+        } catch( NullPointerException e ) {
+        }
     }
 
     protected abstract void update();
@@ -48,7 +51,7 @@ public abstract class Plane extends JPanel {
         return (p - halfSize) / scale;
     }
 
-    protected double pixelToCord( int p ) {
+    public double pixelToCord( int p ) {
         return pixelToCord( p, HALF_SIZE );
     }
 

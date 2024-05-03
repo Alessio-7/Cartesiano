@@ -23,7 +23,6 @@ public abstract class Polygon {
     public Polygon( boolean open ) {
         this.open = open;
         this.points = new ArrayList<>();
-        //System.out.println(this.points.ensureCapacity(  ););
     }
 
     public boolean isOpen() {
@@ -31,6 +30,8 @@ public abstract class Polygon {
     }
 
     public Point[] getPoints() {
+        if( points.isEmpty() )
+            return new Point[1];
         return points.toArray( new Point[0] );
     }
 

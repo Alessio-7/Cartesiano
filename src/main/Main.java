@@ -6,12 +6,17 @@ import parametrics.Ellipse;
 import parametrics.Parametric;
 import planes.Plane;
 import planes.RealPlane;
+import planes.VectorPlane;
 import polygons.ParametricInscribed;
 import polygons.Polygon;
 import primitives.Point;
+import primitives.Vec;
+import primitives.Vec2;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -79,16 +84,11 @@ public class Main extends JFrame {
         double speed = 0.01d;
 
         RealPlane plane = new RealPlane( SIZE, scale );
-        //ComplexPlane plane2 = new ComplexPlane( SIZE, scale );
 
-
-        panel.addParameter( "t", 1.54 );
+        panel.addParameter( "t", 0 );
         panel.addParameter( "r", 1 );
         panel.addParameter( "a", 3 );
         panel.addParameter( "b", 2 );
-
-        inspectPanel.addInspectObject( "center" );
-        inspectPanel.addInspectObject( "tpk1" );
 
         Ellipse e = new Ellipse( 3, 2 ) {
 
@@ -123,10 +123,9 @@ public class Main extends JFrame {
                 setR( panel.getParameter( "r" ) );
                 setAlpha( e.getX( panel.getParameter( "t" ) ) );
                 setBeta( e.getY( panel.getParameter( "t" ) ) );
-
-                inspectPanel.update( "center", new Point( getAlpha(), getBeta() ) );
             }
         };
+
 
         ParametricInscribed pi = new ParametricInscribed( e, 4 ) {
 
@@ -137,33 +136,35 @@ public class Main extends JFrame {
             public void update( double time ) {
                 a = e.getA();
                 b = e.getB();
-
+                double d = panel.getParameter( "r" );
                 tpk = panel.getParameter( "t" );
 
-                double tpk1 = solution( panel.getParameter( "r" ) );
+
+                double tpk1 = solution( d, tpk );
+                double tpk2 = solution( d, -tpk );
+
+
                 inspectPanel.update( "tpk1", tpk1 );
+                inspectPanel.update( "tpk2", tpk2 );
 
                 Point pk1 = new Point( e.getX( tpk1 ), e.getY( tpk1 ) );
+                Point pk2 = new Point( e.getX( tpk2 ), e.getY( tpk2 ) );
 
                 points.clear();
+                points.add( pk2 );
                 points.add( new Point( e.getX( tpk ), e.getY( tpk ) ) );
                 points.add( pk1 );
 
-                /*
-                double[] xs = allSolutions( panel.getParameter( "r" ) );
+            }
 
-                Point pk1 = new Point( xs[0], gamma( xs[0] ) );
-                Point pk2 = new Point( xs[1], gamma( xs[1] ) );
+            @Override
+            protected Function<Double> derivateParametricGetX() {
+                return t -> e.getA() * Math.sin( t );
+            }
 
-                inspectPanel.update( "root1", xs[0] );
-                inspectPanel.update( "root2", xs[1] );
-                inspectPanel.update( "gamma", gamma( pk.x ) );
-
-                points.clear();
-                points.add( pk1 );
-                points.add( pk );
-                points.add( pk2 );
-                */
+            @Override
+            protected Function<Double> derivateParametricGetY() {
+                return t -> e.getB() * Math.cos( t );
             }
         };
 
@@ -171,9 +172,17 @@ public class Main extends JFrame {
         plane.addParametric( c );
         plane.addPolygon( pi );
 
-        //plane2.addFunction( x -> new Complex( e.getX( x.a ) - c.getX( x.b ), e.getY( x.a ) - c.getY( x.b ) ) );
+
+        VectorPlane plane2 = new VectorPlane( SIZE, scale, VectorPlane.VECTOR_MODE );
+
+        Function<Vec2> f = v -> new Vec( e.getX( v.i() ) - panel.getParameter( "r" ) * Math.cos( v.j() ) - e.getX( panel.getParameter( "t" ) ),
+                e.getY( v.i() ) - panel.getParameter( "r" ) * Math.sin( v.j() ) - e.getY( panel.getParameter( "t" ) ) ).toVec2();
+
+        plane2.addFunction( f );
 
         new Main( plane, speed );
+        Main m = new Main( plane2, speed );
+        addMouseTracker( m, plane2 );
 
         //new Main( RealPlane.getSample( SIZE, scale ), speed );
         //new Main( ParametricPlane.getSample( SIZE, scale ), speed );
@@ -182,6 +191,23 @@ public class Main extends JFrame {
 
         panel.setVisible( true );
         inspectPanel.setVisible( true );
+    }
+
+    static void addMouseTracker( Main m, Plane plane ) {
+        m.addMouseMotionListener( new MouseMotionListener() {
+            @Override
+            public void mouseDragged( MouseEvent e ) {
+            }
+
+            @Override
+            public void mouseMoved( MouseEvent e ) {
+
+                Vec2 v = new Vec2( plane.pixelToCord( e.getX() - 8 ), -plane.pixelToCord( e.getY() - 30 ) );
+
+                inspectPanel.update( "mouseCords" + posX, v );
+            }
+        } );
+
     }
 
 }

@@ -6,13 +6,18 @@ import primitives.Complex;
 import primitives.Vec2;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class VectorPlane extends FunctionPlane<Vec2> {
 
+    public static final int VECTOR_MODE = 0;
+    public static final int COLOR_MODE = 1;
     private final InfoVec[][] vecs;
+    private final BufferedImage image;
     private final double space;
+    private final int mode;
 
-    public VectorPlane( int SIZE, double scale ) {
+    public VectorPlane( int SIZE, double scale, int mode ) {
         super( SIZE, scale );
 
         //space = scale / 2;
@@ -20,6 +25,13 @@ public class VectorPlane extends FunctionPlane<Vec2> {
 
         int l = (int) ((SIZE / space) + 1);
         vecs = new InfoVec[l][l];
+
+        this.mode = mode;
+        this.image = new BufferedImage( SIZE, SIZE, BufferedImage.TYPE_INT_RGB );
+    }
+
+    public VectorPlane( int SIZE, double scale ) {
+        this( SIZE, scale, VECTOR_MODE );
     }
 
     public static VectorPlane getSample( int SIZE, double scale ) {
@@ -46,9 +58,7 @@ public class VectorPlane extends FunctionPlane<Vec2> {
         return p;
     }
 
-    @Override
-    protected void update() {
-
+    private void updateVector() {
         Function<Vec2> f = getFirstFunction();
 
         Vec2 v;
@@ -66,24 +76,49 @@ public class VectorPlane extends FunctionPlane<Vec2> {
 
                 double phase = v.phaseRad();
                 double mod = v.mod();
-                double len = Utils.scaleAtan( 0.5, 1, mod );
+                double len = Utils.scaleAtan( 0.1, 1, mod );
 
                 vecs[i][j] = new InfoVec(
                         (int) (x + Math.cos( phase ) * (space - 5) * len),
                         (int) (y + Math.sin( phase ) * (space - 5) * len),
-                        new Color( Utils.interpolateColor( Color.blue, Color.yellow, Utils.scaleAtan( mod ) ) ).getRGB()
-                        //new Color( Utils.interpolateColor( Color.blue, Color.red, Utils.scaleAtan( mod ) ) ).getRGB()
+                        Utils.interpolateColor( Color.blue, Color.yellow, Utils.scaleAtan( mod ) )
                 );
                 j++;
             }
             i++;
         }
+    }
 
+    private void updateColor() {
+        Function<Vec2> f = getFirstFunction();
+
+        for( int x = 0; x < SIZE; x++ ) {
+            for( int y = 0; y < SIZE; y++ ) {
+
+                double a = pixelToCord( x );
+                double b = -pixelToCord( y );
+
+                image.setRGB( x, y, Utils.interpolateColor( Color.yellow, Color.blue, Utils.scaleAtan( f.f( new Vec2( a, b ) ).mod() ) ) );
+            }
+        }
     }
 
     @Override
-    protected void paintChild( Graphics2D g ) {
+    protected void update() {
 
+        switch( mode ) {
+            case VECTOR_MODE:
+                updateVector();
+                break;
+
+            case COLOR_MODE:
+                updateColor();
+                break;
+        }
+
+    }
+
+    private void paintVector( Graphics2D g ) {
         int strokeSize = (int) ((BasicStroke) g.getStroke()).getLineWidth() + 2;
         int vecHeadSize = (int) (strokeSize * 1.9);
 
@@ -104,6 +139,24 @@ public class VectorPlane extends FunctionPlane<Vec2> {
                 j++;
             }
             i++;
+        }
+    }
+
+    private void paintColor( Graphics2D g ) {
+        g.drawImage( image, 0, 0, null );
+    }
+
+    @Override
+    protected void paintChild( Graphics2D g ) {
+
+        switch( mode ) {
+            case VECTOR_MODE:
+                paintVector( g );
+                break;
+
+            case COLOR_MODE:
+                paintColor( g );
+                break;
         }
     }
 
